@@ -198,7 +198,7 @@ ACL_top_v1_0_m_axis_rxs_inst : ACL_top_v1_0_m_axis_rxs
 		M_AXIS_TREADY	=> m_axis_rxs_tready
 	);
 
-	-- Add user logic here
+	-- Add user logic here.
 
 	-- User logic ends
 
