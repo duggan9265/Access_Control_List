@@ -1,0 +1,79 @@
+{
+   "ActiveEmotionalView":"Default View",
+   "Default View_ScaleFactor":"0.543928",
+   "Default View_TopLeft":"-428,-559",
+   "ExpandedHierarchyInLayout":"",
+   "comment_0":"PL ETHERNET SGMII DESIGN",
+   "comment_1":"PL ETHERNET SGMII DESIGN",
+   "comment_2":"PL ETHERNET SGMII DESIGN",
+   "commentid":"comment_0|comment_1|comment_2|",
+   "font_comment_0":"14",
+   "font_comment_1":"14",
+   "font_comment_2":"14",
+   "guistr":"# # String gsaved with Nlview 7.5.8 2022-09-21 7111 VDI=41 GEI=38 GUI=JA:10.0
+#  -string -flagsOSRD
+preplace port mgt_clk -pg 1 -lvl 0 -x -30 -y -540 -defaultsOSRD
+preplace port sfp -pg 1 -lvl 5 -x 2140 -y -420 -defaultsOSRD
+preplace port port-id_axil_reset_led -pg 1 -lvl 5 -x 2140 -y -480 -defaultsOSRD
+preplace portBus axi_lite_clk_led -pg 1 -lvl 5 -x 2140 -y -540 -defaultsOSRD
+preplace portBus mgt_clk_led -pg 1 -lvl 5 -x 2140 -y -510 -defaultsOSRD
+preplace portBus rx_clk_led -pg 1 -lvl 5 -x 2140 -y -450 -defaultsOSRD
+preplace portBus sfp_tx_dis -pg 1 -lvl 5 -x 2140 -y -390 -defaultsOSRD
+preplace inst axi_eth_0 -pg 1 -lvl 1 -x 240 -y 170 -defaultsOSRD
+preplace inst axi_eth_0_dma -pg 1 -lvl 4 -x 1800 -y -400 -defaultsOSRD
+preplace inst other_perph -pg 1 -lvl 2 -x 800 -y -450 -defaultsOSRD
+preplace inst zynq_ps -pg 1 -lvl 3 -x 1410 -y -430 -defaultsOSRD
+preplace netloc axi_eth_0_dma_mm2s_cntrl_reset_out_n 1 0 5 80 -150 NJ -150 NJ -150 NJ -150 2010
+preplace netloc axi_eth_0_dma_mm2s_introut 1 2 3 1240 -140 NJ -140 1970
+preplace netloc axi_eth_0_dma_mm2s_prmry_reset_out_n 1 0 5 100 -130 NJ -130 NJ -130 NJ -130 2040
+preplace netloc axi_eth_0_dma_s2mm_introut 1 2 3 1230 -120 NJ -120 1980
+preplace netloc axi_eth_0_dma_s2mm_prmry_reset_out_n 1 0 5 90 -50 NJ -50 NJ -50 NJ -50 2050
+preplace netloc axi_eth_0_dma_s2mm_sts_reset_out_n 1 0 5 70 -110 NJ -110 NJ -110 NJ -110 2020
+preplace netloc axi_eth_0_interrupt 1 1 2 680J -160 950
+preplace netloc axi_eth_0_rxuserclk2_out 1 1 1 640 -470n
+preplace netloc axi_eth_0_userclk2_out 1 1 1 660 -450n
+preplace netloc other_perph_Dout1 1 2 3 970 -100 NJ -100 2090J
+preplace netloc other_perph_Dout2 1 2 3 960 -90 NJ -90 2080J
+preplace netloc other_perph_Dout3 1 2 3 940 -80 NJ -80 2070J
+preplace netloc other_perph_Res 1 2 3 920 -70 NJ -70 2100J
+preplace netloc other_perph_dout 1 2 3 910 -60 NJ -60 2120J
+preplace netloc other_perph_interrupt 1 2 1 930 -400n
+preplace netloc s_axi_aclk_1 1 0 4 50 -220 680 -220 NJ -220 1620
+preplace netloc s_axi_aresetn_1 1 0 4 10 -260 630 -300 NJ -300 1580
+preplace netloc zynq_ps_clk_50 1 0 4 60 -210 NJ -210 NJ -210 1560
+preplace netloc S_AXI_1 1 1 3 690 -310 NJ -310 1550
+preplace netloc axi_eth_0_dma_M_AXIS_CNTRL 1 0 5 30 -240 NJ -240 NJ -240 NJ -240 1960
+preplace netloc axi_eth_0_dma_M_AXIS_MM2S 1 0 5 40 -230 NJ -230 NJ -230 NJ -230 2000
+preplace netloc axi_eth_0_dma_M_AXI_MM2S 1 2 3 1270 -180 NJ -180 2030
+preplace netloc axi_eth_0_dma_M_AXI_S2MM 1 2 3 1250 -160 NJ -160 1990
+preplace netloc axi_eth_0_dma_M_AXI_SG 1 2 3 1260 -170 NJ -170 2060
+preplace netloc axi_eth_0_m_axis_rxd 1 1 3 650J -200 NJ -200 1630
+preplace netloc axi_eth_0_m_axis_rxs 1 1 3 670J -190 NJ -190 1640
+preplace netloc axi_eth_0_sfp 1 1 4 690 -40 NJ -40 NJ -40 2110J
+preplace netloc mgt_clk_1 1 0 1 -10 -540n
+preplace netloc zynq_ps_M00_AXI 1 3 1 1610 -500n
+preplace netloc zynq_ps_M01_AXI 1 0 4 20 -250 NJ -250 NJ -250 1570
+preplace cgraphic comment_2 place left 310 0 textcolor 4 linecolor 3
+preplace cgraphic comment_1 place left 310 0 textcolor 4 linecolor 3
+preplace cgraphic comment_0 place left 310 0 textcolor 4 linecolor 3
+levelinfo -pg 1 -30 240 800 1410 1800 2140
+pagesize -pg 1 -db -bbox -sgen -310 -560 2310 900
+",
+   "linktoobj_comment_0":"",
+   "linktoobj_comment_1":"",
+   "linktoobj_comment_2":"",
+   "linktotype_comment_0":"bd_design",
+   "linktotype_comment_1":"bd_design",
+   "linktotype_comment_2":"bd_design"
+}
+{
+   "da_aeth_cnt":"1",
+   "da_axi4_cnt":"2",
+   "da_board_cnt":"5",
+   "da_clkrst_cnt":"2"
+}
+{
+   "/comment_0":"comment_0",
+   "/comment_1":"comment_1",
+   "/comment_2":"comment_2"
+}
