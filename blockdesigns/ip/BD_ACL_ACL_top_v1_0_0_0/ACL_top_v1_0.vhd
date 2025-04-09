@@ -138,10 +138,10 @@ architecture arch_imp of ACL_top_v1_0 is
 	-- Signals to connect to packet_parser i.e. incoming data
 
 	signal rx_data         : std_logic_vector(C_s_axis_rxd_TDATA_WIDTH-1 downto 0); -- Buffer for incoming data
-	signal rx_valid        : std_logic := '0';  -- Data valid flag
-	signal rx_ready        : std_logic := '1';  -- Ready to accept data
-	signal byte_counter    : integer := 0;      -- Count received bytes
-	signal frame_active    : std_logic := '0';  -- Indicates an active frame
+	signal rx_valid        : std_logic;  -- Data valid flag
+	signal rx_ready        : std_logic;  -- Ready to accept data
+	signal byte_counter    : integer;      -- Count received bytes
+	signal frame_active    : std_logic;  -- Indicates an active frame
 
 begin
 
