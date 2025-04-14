@@ -7,7 +7,8 @@
       "name": "BD_ACL",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2023.2"
+      "tool_version": "2023.2",
+      "validated": "true"
     },
     "design_tree": {
       "other_perph": {
@@ -5649,6 +5650,14 @@
               "HAS_TLAST": {
                 "value": "1",
                 "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "99990005",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "BD_ACL_zusp_ps_0_pl_clk0",
+                "value_src": "default_prop"
               }
             },
             "port_maps": {
@@ -5714,6 +5723,14 @@
               "HAS_TLAST": {
                 "value": "1",
                 "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "99990005",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "BD_ACL_zusp_ps_0_pl_clk0",
+                "value_src": "default_prop"
               }
             },
             "port_maps": {
@@ -5779,6 +5796,14 @@
               "HAS_TLAST": {
                 "value": "1",
                 "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "99990005",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "BD_ACL_zusp_ps_0_pl_clk0",
+                "value_src": "default_prop"
               }
             },
             "port_maps": {
@@ -5844,6 +5869,14 @@
               "HAS_TLAST": {
                 "value": "1",
                 "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "99990005",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "BD_ACL_zusp_ps_0_pl_clk0",
+                "value_src": "default_prop"
               }
             },
             "port_maps": {
@@ -5886,6 +5919,14 @@
               "ASSOCIATED_RESET": {
                 "value": "s_axis_rxd_aresetn",
                 "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "99990005",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "BD_ACL_zusp_ps_0_pl_clk0",
+                "value_src": "default_prop"
               }
             }
           },
@@ -5910,6 +5951,14 @@
               "ASSOCIATED_RESET": {
                 "value": "s_axis_rxs_aresetn",
                 "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "99990005",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "BD_ACL_zusp_ps_0_pl_clk0",
+                "value_src": "default_prop"
               }
             }
           },
@@ -5934,6 +5983,14 @@
               "ASSOCIATED_RESET": {
                 "value": "m_axis_rxd_aresetn",
                 "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "99990005",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "BD_ACL_zusp_ps_0_pl_clk0",
+                "value_src": "default_prop"
               }
             }
           },
@@ -5958,6 +6015,14 @@
               "ASSOCIATED_RESET": {
                 "value": "m_axis_rxs_aresetn",
                 "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "99990005",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "BD_ACL_zusp_ps_0_pl_clk0",
+                "value_src": "default_prop"
               }
             }
           },
