@@ -1,3 +1,4 @@
+-- vhdl-linter-disable type-resolved component not-declared unused
 --Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 --Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
@@ -5812,7 +5813,7 @@ architecture STRUCTURE of BD_ACL is
     s_axis_s2mm_sts_tlast : in STD_LOGIC;
     mm2s_introut : out STD_LOGIC;
     s2mm_introut : out STD_LOGIC
-  );
+  ); -- vhdl-linter-disable-line component
   end component BD_ACL_axi_eth_0_dma_0;
   component BD_ACL_ACL_top_v1_0_0_0 is
   port (

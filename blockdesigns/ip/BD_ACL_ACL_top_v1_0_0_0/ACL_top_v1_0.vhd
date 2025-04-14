@@ -1,4 +1,11 @@
--- vhdl-linter-disable type-resolved
+-- vhdl-linter-disable type-resolved.
+-- Created by Daniel Duggan, April 2025. 
+
+-- This entity is created using the create and package new IP functionality in Vivado.
+-- It is used as a top level for the Access Control List. All sub-entites of the access 
+-- control list are instantiated here with the exception of the FIFO contained inside packet_parser.vhd
+-- The AXIS inputs are connected to the packet parser entity (packet_parser.vhd) starting line 217.
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -207,11 +214,20 @@ ACL_top_v1_0_m_axis_rxs_inst : ACL_top_v1_0_m_axis_rxs
 		M_AXIS_TREADY	=> m_axis_rxs_tready
 	);
 
-	-- Add user logic here.
-	-- Signals for buffering incoming data
+	-- Instatiation of packet parser. Receives data from ACL_top_v1_0_0
+	packet_parser_inst: entity work.packet_parser
+	 generic map(
+		C_s_axis_rxd_TDATA_WIDTH => C_s_axis_rxd_TDATA_WIDTH
+	)
+	 port map(
+		clk => s_axis_rxd_aclk, --all signals come from ACL_top_v1_0_s_axis_rxd_inst : ACL_top_v1_0_s_axis_rxd
+		rst => s_axis_rxd_aresetn,
+		i_rxd_tvalid => s_axis_rxd_tvalid, -- goes to FIFO wr_en ultimately
+		i_rxd_tdata => s_axis_rxd_tdata,
+		i_rx_tlast => s_axis_rxd_tlast, -- goes to pack_parser --> fifo. Controls wr_cnt.
+		o_rx_ready => s_axis_rxd_tready
+	);
 	
-	
-
 	-- User logic ends
 
 end arch_imp;
