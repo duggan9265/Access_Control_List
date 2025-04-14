@@ -40,6 +40,9 @@ architecture rtl of packet_parser is
         i_wr_cnt : unsigned(fifo_depth - 1 downto 0);
     end record;
 
+    type fsm is
+        (idle, );
+
     
     signal ether : ether_frame_rec;
     signal ipv4 : ipv4_frame_rec;
