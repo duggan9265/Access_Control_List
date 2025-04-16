@@ -144,11 +144,8 @@ architecture arch_imp of ACL_top_v1_0 is
 
 	-- Signals to connect to packet_parser i.e. incoming data
 
-	signal rx_data         : std_logic_vector(C_s_axis_rxd_TDATA_WIDTH-1 downto 0); -- Buffer for incoming data
-	signal rx_valid        : std_logic;  -- Data valid flag
-	signal rx_ready        : std_logic;  -- Ready to accept data
-	signal byte_counter    : integer;      -- Count received bytes
-	signal frame_active    : std_logic;  -- Indicates an active frame
+	signal o_rx_tdata      : std_logic_vector(C_s_axis_rxd_TDATA_WIDTH-1 downto 0); -- data_out from packet_parser to rule matcher
+
 
 begin
 
@@ -215,7 +212,7 @@ ACL_top_v1_0_m_axis_rxs_inst : ACL_top_v1_0_m_axis_rxs
 	);
 
 	-- Instatiation of packet parser. Receives data from ACL_top_v1_0_0
-	packet_parser_inst: entity work.packet_parser
+	packet_parser_inst: entity work.packet_parser -- vhdl-linter-disable-line not-declared
 	 generic map(
 		C_s_axis_rxd_TDATA_WIDTH => C_s_axis_rxd_TDATA_WIDTH
 	)
@@ -225,7 +222,8 @@ ACL_top_v1_0_m_axis_rxs_inst : ACL_top_v1_0_m_axis_rxs
 		i_rxd_tvalid => s_axis_rxd_tvalid, -- goes to FIFO wr_en ultimately
 		i_rxd_tdata => s_axis_rxd_tdata,
 		i_rx_tlast => s_axis_rxd_tlast, -- goes to pack_parser --> fifo. Controls wr_cnt.
-		o_rx_ready => s_axis_rxd_tready
+        o_rxd_tready => s_axis_rxd_tready, -- low when FIFO is full.
+		o_rxd_tdata => o_rx_tdata
 	);
 	
 	-- User logic ends
