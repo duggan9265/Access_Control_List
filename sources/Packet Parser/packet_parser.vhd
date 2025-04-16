@@ -7,7 +7,7 @@
 -- The MAC address, source address and Ethertype are first split into 3 words.
 -- It is first checked that the ethernet frame contains the IPv4 protocol (ethertype = 0x800).
 -- If not the frame is discarded. A signal data.invalid goes high. This is sent to the FIFO which then only reads out 0's.
--- Next the IPv4 frame is checked for it's protocol.
+-- If 0x800 is detected, the IPv4 frame is checked for it's protocol.
 -- Certain protocols are passed, others are not, and the frame is discarded.
 -- Rejected protocols cuase data.invalid to go high.
 -- When i_rx_tlast is asserted, the state machine retruns to idle. 
@@ -24,7 +24,7 @@
 --  word 2  |      word 3      |
  
 --                 IPv4 Header
--- Starts at byte 15, contained in word 3 is i.) the version, ii.) IHL,iii.) DSPC and iv.) ECN which altogether total 16 bits (0-15).
+-- Starts at byte 15, contained in word 3 is i.) the version, ii.) IHL, iii.) DSPC and iv.) ECN, which altogether total 16 bits (0-15).
 
 
 library ieee;
