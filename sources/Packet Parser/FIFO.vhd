@@ -57,6 +57,7 @@ begin
                     fifo.wr_cnt <= fifo.wr_cnt + 1;
                 end if;
             end if;
+
         end if;
     end process;
 
@@ -75,15 +76,12 @@ begin
         end if;
     end process;
 
-    fifo_write : process (clk)
+    fifo_write_read : process (clk)
     begin
         if (rising_edge(clk)) then
             memory(to_integer(fifo.wr_cnt)) <= i_rx_data;
         end if;
-    end process;
 
-    fifo_read : process (clk)
-    begin
         if (rising_edge(clk)) then
             if i_fifo_invalid = '0' then
                 o_data_sig <= std_logic_vector(memory(to_integer(fifo.rd_cnt)));
@@ -97,7 +95,6 @@ begin
     begin
         if fifo.wr_cnt < fifo.rd_cnt then
             fifo.entry_count <= resize(fifo.wr_cnt - fifo.rd_cnt, fifo_depth + 1) + to_unsigned(2 ** fifo_depth, fifo_depth + 1);
-
         else
             fifo.entry_count <= resize(fifo.wr_cnt - fifo.rd_cnt, fifo_depth + 1);
         end if;
@@ -105,7 +102,8 @@ begin
 
     fifo.empty <= '1' when to_integer(fifo.entry_count) = 0 else
     '0';
-    fifo.full <= '1' when to_integer(fifo.wr_cnt) = 2 ** fifo_depth;
+    fifo.full <= '1' when to_integer(fifo.entry_count) = 2 ** fifo_depth else
+    '0';
 
     o_wr_cnt <= fifo.wr_cnt;
     fifo.rxd_tready <= not fifo.full; -- deassert ready when FIFO full.
