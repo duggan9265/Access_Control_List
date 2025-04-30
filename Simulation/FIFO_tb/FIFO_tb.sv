@@ -60,7 +60,7 @@ import generate_etherframe_pkg::*;
     rmv_reset(rst);
     //generate_ethernet_frame(clk,i_rx_data,i_rxd_tvalid,rst,i_rx_tlast);
     generate_full_ethernet_frame(
-        clk, i_rx_data, i_rxd_tvalid, rst,i_rx_tlast,i_fifo_invalid    
+        clk, i_rx_data, i_rxd_tvalid,i_rx_tlast,i_rd_valid, i_fifo_invalid    
     );
 
     // Monitor outputs

@@ -82,7 +82,13 @@ package generate_etherframe_pkg;
       @(posedge clk);
       i_rx_data = current_word;
 
-      // Set tlast on last transfer
+      // Start reading after 3 words (12 bytes) are written
+      if (byte_idx >= 12) begin
+        i_rd_valid = 1'b1;
+        i_fifo_invalid = 1'b0;
+        end
+
+      //Set tlast on last transfer
       if (bytes_remaining <= 4)
       begin
         i_rx_tlast = 1'b1;
