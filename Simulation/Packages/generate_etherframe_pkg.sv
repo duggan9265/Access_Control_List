@@ -83,10 +83,36 @@ package generate_etherframe_pkg;
       i_rx_data = current_word;
 
       // Start reading after 3 words (12 bytes) are written
-      if (byte_idx >= 12) begin
+      if (byte_idx >= 12)
+      begin
         i_rd_valid = 1'b1;
         i_fifo_invalid = 1'b0;
-        end
+      end
+
+      // test logic when i_rd_valid and i_fifo_invalid are changed.
+      // if (byte_idx >= 16)
+      // begin
+      //   i_rd_valid = 1'b0;
+      //   i_fifo_invalid = 1'b0;
+      // end
+
+      // if (byte_idx >= 20)
+      // begin
+      //   i_rd_valid = 1'b1;
+      //   i_fifo_invalid = 1'b0;
+      // end
+
+      // if (byte_idx >= 28)
+      // begin
+      //   i_rd_valid = 1'b0;
+      //   i_fifo_invalid = 1'b1;
+      // end
+
+      // if (byte_idx >= 36)
+      // begin
+      //   i_rd_valid = 1'b1;
+      //   i_fifo_invalid = 1'b0;
+      // end
 
       //Set tlast on last transfer
       if (bytes_remaining <= 4)

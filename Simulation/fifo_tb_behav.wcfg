@@ -14,15 +14,19 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="4.090 ns"></ZoomStartTime>
-      <ZoomEndTime time="78.591 ns"></ZoomEndTime>
-      <Cursor1Time time="16.000 ns"></Cursor1Time>
+      <ZoomStartTime time="2,411.940 ns"></ZoomStartTime>
+      <ZoomEndTime time="2,442.641 ns"></ZoomEndTime>
+      <Cursor1Time time="2,441.600 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="129"></NameColumnWidth>
-      <ValueColumnWidth column_width="90"></ValueColumnWidth>
+      <ValueColumnWidth column_width="85"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
+   <wave_markers>
+      <marker time="41600" label="" />
+      <marker time="60780" label="" />
+   </wave_markers>
    <wvobject fp_name="group27" type="group">
       <obj_property name="label">Monitored_Sigs</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -112,6 +116,7 @@
          <obj_property name="ElementShortName">memory[0:511][0:31]</obj_property>
          <obj_property name="ObjectShortName">memory[0:511][0:31]</obj_property>
          <obj_property name="Reversed">true</obj_property>
+         <obj_property name="isExpanded"></obj_property>
       </wvobject>
       <wvobject fp_name="/fifo_tb/DUT/i_rx_tlast" type="logic">
          <obj_property name="ElementShortName">i_rx_tlast</obj_property>
@@ -121,7 +126,6 @@
    <wvobject fp_name="group555" type="group">
       <obj_property name="label">fifo_read</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/fifo_tb/DUT/clk" type="logic">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
