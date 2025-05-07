@@ -210,7 +210,7 @@ ACL_RTL_top_v1_0_m_axi_rxs_inst : ACL_RTL_top_v1_0_m_axi_rxs
 		rst => s_axi_rxd_aresetn,
 		i_rxd_tvalid => s_axi_rxd_tvalid, -- goes to FIFO wr_en ultimately
 		i_rxd_tdata => s_axi_rxd_tdata,
-		i_rx_tlast => s_axi_rxd_tlast, -- goes to pack_parser --> fifo. Controls wr_cnt.
+		i_rxd_tlast => s_axi_rxd_tlast, -- goes to pack_parser --> fifo. Controls wr_cnt.
         o_rxd_tready => s_axi_rxd_tready, -- low when FIFO is full.
 		o_rxd_tdata => o_rx_tdata
 	);

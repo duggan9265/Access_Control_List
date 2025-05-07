@@ -6,7 +6,7 @@
 -- Reset (rst) is active low and asynchronous to match the AXIS protocol.
 -- i_rxd_tvalid acts as a wr_enable (controlled by ACL_top). i_rd_valid acts as a read_enable (controlled by the packet parser.)
 -- if i_fifo_invalid is asserted, the FIFO outputs 0 until the FSM inside packet_parser returns to idle. 
--- This occurs when i_rx_tlast is asserted inside the packet parser.
+-- This occurs when i_rxd_tlast is asserted inside the packet parser.
 library ieee;
 use ieee.numeric_std.all;
 use ieee.std_logic_1164.all;
@@ -20,7 +20,7 @@ entity fifo is
     );
 
     port (
-        clk, rst, i_rxd_tvalid, i_rd_valid, i_rx_tlast, i_fifo_invalid : in std_logic; --wr enable = i_rx_tvalid
+        clk, rst, i_rxd_tvalid, i_rd_valid, i_rxd_tlast, i_fifo_invalid : in std_logic; --wr enable = i_rx_tvalid
         i_rx_data : in std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0);
         o_data : out std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- o_rx_data = o_data
         o_wr_cnt : out unsigned(fifo_depth - 1 downto 0);
@@ -51,7 +51,7 @@ begin
             fifo.wr_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
             if fifo.full = '0' and i_rxd_tvalid = '1' then
-                if fifo.wr_cnt = (2 ** fifo_depth) - 1 or i_rx_tlast = '1' then
+                if fifo.wr_cnt = (2 ** fifo_depth) - 1 or i_rxd_tlast = '1' then
                     fifo.wr_cnt <= (others => '0');
                 else
                     fifo.wr_cnt <= fifo.wr_cnt + 1;

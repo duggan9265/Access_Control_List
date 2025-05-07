@@ -10,9 +10,7 @@
 -- If 0x800 is detected, the IPv4 frame is checked for it's protocol.
 -- Certain protocols are passed, others are not, and the frame is discarded.
 -- Rejected protocols cuase data.invalid to go high.
--- When i_rx_tlast is asserted, the state machine retruns to idle. 
-
-
+-- When i_rxd_tlast is asserted, the state machine retruns to idle. 
 --                 Ethernet Header
 
 -- MAC Dest.     MAC Source       Ehertype             32-bit words = 4 byte words.
@@ -22,11 +20,9 @@
 --                 14 bytes
 --  word 1  |      word 2      |    word 3    
 --  word 2  |      word 3      |
- 
+
 --                 IPv4 Header
 -- Starts at byte 15, contained in word 3 is i.) the version, ii.) IHL, iii.) DSPC and iv.) ECN, which altogether total 16 bits (0-15).
-
-
 library ieee;
 use ieee.numeric_std.all;
 use ieee.std_logic_1164.all;
@@ -38,7 +34,7 @@ entity packet_parser is
         fifo_depth : integer := 9
     );
     port (
-        clk, rst, i_rxd_tvalid, i_rx_tlast : in std_logic; --will connect to FIFO
+        clk, rst, i_rxd_tvalid, i_rxd_tlast : in std_logic; --will connect to FIFO
         i_rxd_tdata : in std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- connected to FIFO
         o_rxd_tdata : out std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- connected to ACL_rule_matcher
         o_rxd_tready, o_fifo_invalid : out std_logic
@@ -94,7 +90,7 @@ begin
             rst => rst,
             i_rxd_tvalid => i_rxd_tvalid,
             i_rx_data => i_rxd_tdata,
-            i_rx_tlast => i_rx_tlast,
+            i_rxd_tlast => i_rxd_tlast,
             i_rd_valid => fifo.rd_valid, -- rd_valid acts as a rd_enable. Controlled by packet_parser 'I can accept data'.
             i_fifo_invalid => data.invalid, -- to make FIFO output all 0's when don't have IPv4 header.
             o_data => fifo.i_data,
@@ -108,8 +104,6 @@ begin
             when idle =>
                 if fifo.i_wr_cnt >= 2 then -- >= have at least 3 words.
                     next_state <= word0;
-                else
-                    state <= idle;
                 end if;
 
             when word0 =>
@@ -125,12 +119,12 @@ begin
                 next_state <= IPv4_frame;
 
             when IPv4_frame =>
-                if i_rx_tlast = '1' then
+                if i_rxd_tlast = '1' then
                     next_state <= idle;
                 end if;
 
             when others =>
-                state <= next_state;
+                next_state <= idle;
         end case;
     end process;
 

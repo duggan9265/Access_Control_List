@@ -6,15 +6,11 @@ test the operation of the FIFO
 - Adds padding to meet minimum Ethernet frame size (64 bytes) when required.
 */
 
-package generate_etherframe_pp_pkg;
+package ether_frame_pp_pkg;
 
-  task automatic generate_full_ethernet_frame(
-      ref logic clk,
-      ref logic [31:0] i_rx_data,
-      ref logic i_rxd_tvalid, //write control
-      ref logic i_rx_tlast, //for when last byte is written
-      ref logic i_rd_valid, // high to read data
-      ref logic i_fifo_invalid, //low to read data
+  task automatic generate_full_ethernet_frame_pp(
+      ref logic clk, rst, i_rxd_tvalid, i_rxd_tlast,
+      ref logic [31:0] i_rxd_tdata,
       input logic [47:0] dest_mac = 48'h001422012345,
       input logic [47:0] src_mac = 48'h0014226789AB,
       input logic [15:0] ether_type = 16'h0800
@@ -80,19 +76,18 @@ package generate_etherframe_pp_pkg;
       endcase
 
       @(posedge clk);
-      i_rx_data = current_word;
+      i_rxd_tdata = current_word;
 
       // Start reading after 3 words (12 bytes) are written
-      if (byte_idx >= 12)
-      begin
-        i_rd_valid = 1'b1;
-        i_fifo_invalid = 1'b0;
-      end
+      // if (byte_idx >= 12)
+      // begin
+      //   i_rd_valid = 1'b1;
+      // end
 
       //Set tlast on last transfer
       if (bytes_remaining <= 4)
       begin
-        i_rx_tlast = 1'b1;
+        i_rxd_tlast = 1'b1;
       end
 
       byte_idx += 4;
@@ -101,7 +96,7 @@ package generate_etherframe_pp_pkg;
     // End of frame
     @(posedge clk);
     i_rxd_tvalid = 1'b0;
-    i_rx_tlast = 1'b0;
+    i_rxd_tlast = 1'b0;
 
     $display("[Jumbo Frame] Sent %0d byte Ethernet frame", FRAME_SIZE);
   endtask

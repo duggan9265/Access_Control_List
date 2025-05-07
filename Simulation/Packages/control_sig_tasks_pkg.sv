@@ -36,14 +36,14 @@ package control_sig_tasks_pkg;
   endtask
   ;
 
-  // Asserting/deasserting i_rx_tlast.
-  task automatic i_rx_tlast_high (ref logic i_rx_tlast); //assert
-    i_rx_tlast = 1;
+  // Asserting/deasserting i_rxd_tlast.
+  task automatic i_rxd_tlast_high (ref logic i_rxd_tlast); //assert
+    i_rxd_tlast = 1;
   endtask
   ;
 
-  task automatic i_rx_tlast_low (ref logic i_rx_tlast); //deassert
-    i_rx_tlast = 0;
+  task automatic i_rxd_tlast_low (ref logic i_rxd_tlast); //deassert
+    i_rxd_tlast = 0;
   endtask
   ;
 

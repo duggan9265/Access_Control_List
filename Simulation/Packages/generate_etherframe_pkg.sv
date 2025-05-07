@@ -12,7 +12,7 @@ package generate_etherframe_pkg;
       ref logic clk,
       ref logic [31:0] i_rx_data,
       ref logic i_rxd_tvalid, //write control
-      ref logic i_rx_tlast, //for when last byte is written
+      ref logic i_rxd_tlast, //for when last byte is written
       ref logic i_rd_valid, // high to read data
       ref logic i_fifo_invalid, //low to read data
       input logic [47:0] dest_mac = 48'h001422012345,
@@ -117,7 +117,7 @@ package generate_etherframe_pkg;
       //Set tlast on last transfer
       if (bytes_remaining <= 4)
       begin
-        i_rx_tlast = 1'b1;
+        i_rxd_tlast = 1'b1;
       end
 
       byte_idx += 4;
@@ -126,7 +126,7 @@ package generate_etherframe_pkg;
     // End of frame
     @(posedge clk);
     i_rxd_tvalid = 1'b0;
-    i_rx_tlast = 1'b0;
+    i_rxd_tlast = 1'b0;
 
     $display("[Jumbo Frame] Sent %0d byte Ethernet frame", FRAME_SIZE);
   endtask

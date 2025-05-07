@@ -19,7 +19,7 @@ import generate_etherframe_pkg::*;
   logic rst;
   logic i_rxd_tvalid;
   logic i_rd_valid;
-  logic i_rx_tlast;
+  logic i_rxd_tlast;
   logic i_fifo_invalid;
   logic [C_s_axis_rxd_TDATA_WIDTH - 1:0] i_rx_data;
   //Outputs
@@ -33,7 +33,7 @@ import generate_etherframe_pkg::*;
          .rst(rst),
          .i_rxd_tvalid(i_rxd_tvalid),
          .i_rd_valid(i_rd_valid),
-         .i_rx_tlast(i_rx_tlast),
+         .i_rxd_tlast(i_rxd_tlast),
          .i_fifo_invalid(i_fifo_invalid),
          .i_rx_data(i_rx_data),
          .o_data(o_data),
@@ -49,7 +49,7 @@ import generate_etherframe_pkg::*;
     clk=0;
     //i_rx_data     = 32'h00000000;
     i_rxd_tvalid  = 1'b0;
-    i_rx_tlast    = 1'b0;
+    i_rxd_tlast    = 1'b0;
     i_rd_valid = 0; 
     i_fifo_invalid = 1;
     rst=1'b0;
@@ -58,14 +58,14 @@ import generate_etherframe_pkg::*;
     reset(rst);  // Call the reset task
     #10;
     rmv_reset(rst);
-    //generate_ethernet_frame(clk,i_rx_data,i_rxd_tvalid,rst,i_rx_tlast);
+    //generate_ethernet_frame(clk,i_rx_data,i_rxd_tvalid,rst,i_rxd_tlast);
     generate_full_ethernet_frame(
-        clk, i_rx_data, i_rxd_tvalid,i_rx_tlast,i_rd_valid, i_fifo_invalid    
+        clk, i_rx_data, i_rxd_tvalid,i_rxd_tlast,i_rd_valid, i_fifo_invalid    
     );
 
     // Monitor outputs
-    $monitor("Time=%0t clk=%b rst=%b i_rxd_tvalid=%b i_rd_valid=%b i_rx_data=%h i_rx_tlast=%b o_data=%h o_wr_cnt=%h o_rxd_tready=%b",
-             $time, clk, rst, i_rxd_tvalid, i_rd_valid, i_rx_data, i_rx_tlast, o_data, o_wr_cnt, o_rxd_tready);
+    $monitor("Time=%0t clk=%b rst=%b i_rxd_tvalid=%b i_rd_valid=%b i_rx_data=%h i_rxd_tlast=%b o_data=%h o_wr_cnt=%h o_rxd_tready=%b",
+             $time, clk, rst, i_rxd_tvalid, i_rd_valid, i_rx_data, i_rxd_tlast, o_data, o_wr_cnt, o_rxd_tready);
 
   end
 
