@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="packet_parser_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="control_sig_tasks_pkg" />
+            <top_module name="ether_frame_pp_pkg" />
+            <top_module name="glbl" />
+            <top_module name="packet_parser_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0 ps"></ZoomStartTime>
+      <ZoomEndTime time="7 ps"></ZoomEndTime>
+      <Cursor1Time time="1,000,000 ps"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="203"></NameColumnWidth>
+      <ValueColumnWidth column_width="77"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="3" />
+   <wvobject fp_name="group120" type="group">
+      <obj_property name="label">Generics</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/packet_parser_tb/clk" type="logic">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/rst" type="logic">
+         <obj_property name="ElementShortName">rst</obj_property>
+         <obj_property name="ObjectShortName">rst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/i_rxd_tvalid" type="logic">
+         <obj_property name="ElementShortName">i_rxd_tvalid</obj_property>
+         <obj_property name="ObjectShortName">i_rxd_tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/i_rxd_tlast" type="logic">
+         <obj_property name="ElementShortName">i_rxd_tlast</obj_property>
+         <obj_property name="ObjectShortName">i_rxd_tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/i_rxd_tdata" type="array">
+         <obj_property name="ElementShortName">i_rxd_tdata[31:0]</obj_property>
+         <obj_property name="ObjectShortName">i_rxd_tdata[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/o_rxd_tdata" type="array">
+         <obj_property name="ElementShortName">o_rxd_tdata[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_rxd_tdata[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/o_rxd_tready" type="logic">
+         <obj_property name="ElementShortName">o_rxd_tready</obj_property>
+         <obj_property name="ObjectShortName">o_rxd_tready</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/o_fifo_invalid" type="logic">
+         <obj_property name="ElementShortName">o_fifo_invalid</obj_property>
+         <obj_property name="ObjectShortName">o_fifo_invalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/clk_period" type="other">
+         <obj_property name="ElementShortName">clk_period</obj_property>
+         <obj_property name="ObjectShortName">clk_period</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/C_s_axis_rxd_TDATA_WIDTH" type="array">
+         <obj_property name="ElementShortName">C_s_axis_rxd_TDATA_WIDTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">C_s_axis_rxd_TDATA_WIDTH[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/fifo_depth" type="array">
+         <obj_property name="ElementShortName">fifo_depth[31:0]</obj_property>
+         <obj_property name="ObjectShortName">fifo_depth[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group121" type="group">
+      <obj_property name="label">FIFO</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject fp_name="group122" type="group">
+      <obj_property name="label">Packet_Parser</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+</wave_config>
