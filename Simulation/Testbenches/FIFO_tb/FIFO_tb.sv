@@ -21,7 +21,7 @@ import generate_etherframe_pkg::*;
   logic i_rd_valid;
   logic i_rxd_tlast;
   logic i_fifo_invalid;
-  logic [C_s_axis_rxd_TDATA_WIDTH - 1:0] i_rx_data;
+  logic [C_s_axis_rxd_TDATA_WIDTH - 1:0] i_rxd_tdata;
   //Outputs
   logic [C_s_axis_rxd_TDATA_WIDTH - 1 :0] o_data;
   logic [fifo_depth-1:0] o_wr_cnt;
@@ -35,7 +35,7 @@ import generate_etherframe_pkg::*;
          .i_rd_valid(i_rd_valid),
          .i_rxd_tlast(i_rxd_tlast),
          .i_fifo_invalid(i_fifo_invalid),
-         .i_rx_data(i_rx_data),
+         .i_rxd_tdata(i_rxd_tdata),
          .o_data(o_data),
          .o_wr_cnt(o_wr_cnt),
          .o_rxd_tready(o_rxd_tready)
@@ -47,7 +47,7 @@ import generate_etherframe_pkg::*;
   // Use the task in your simulation
   initial begin
     clk=0;
-    //i_rx_data     = 32'h00000000;
+    //i_rxd_tdata     = 32'h00000000;
     i_rxd_tvalid  = 1'b0;
     i_rxd_tlast    = 1'b0;
     i_rd_valid = 0; 
@@ -58,14 +58,14 @@ import generate_etherframe_pkg::*;
     reset(rst);  // Call the reset task
     #10;
     rmv_reset(rst);
-    //generate_ethernet_frame(clk,i_rx_data,i_rxd_tvalid,rst,i_rxd_tlast);
+    //generate_ethernet_frame(clk,i_rxd_tdata,i_rxd_tvalid,rst,i_rxd_tlast);
     generate_full_ethernet_frame(
-        clk, i_rx_data, i_rxd_tvalid,i_rxd_tlast,i_rd_valid, i_fifo_invalid    
+        clk, i_rxd_tdata, i_rxd_tvalid,i_rxd_tlast,i_rd_valid, i_fifo_invalid    
     );
 
     // Monitor outputs
-    $monitor("Time=%0t clk=%b rst=%b i_rxd_tvalid=%b i_rd_valid=%b i_rx_data=%h i_rxd_tlast=%b o_data=%h o_wr_cnt=%h o_rxd_tready=%b",
-             $time, clk, rst, i_rxd_tvalid, i_rd_valid, i_rx_data, i_rxd_tlast, o_data, o_wr_cnt, o_rxd_tready);
+    $monitor("Time=%0t clk=%b rst=%b i_rxd_tvalid=%b i_rd_valid=%b i_rxd_tdata=%h i_rxd_tlast=%b o_data=%h o_wr_cnt=%h o_rxd_tready=%b",
+             $time, clk, rst, i_rxd_tvalid, i_rd_valid, i_rxd_tdata, i_rxd_tlast, o_data, o_wr_cnt, o_rxd_tready);
 
   end
 
