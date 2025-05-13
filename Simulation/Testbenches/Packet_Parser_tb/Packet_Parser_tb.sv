@@ -43,11 +43,13 @@ import ether_frame_pp_pkg::*;
     rst=1'b0;
     #5;
     //rst=1'b1;
+  
     reset(rst);  // Call the reset task
     #10;
     rmv_reset(rst);
+   
     //generate_ethernet_frame(clk,i_rxd_tdata,i_rxd_tvalid,rst,i_rxd_tlast);
-    generate_full_ethernet_frame_pp(
+    generate_basic_ipv4_tcp_frame(
         clk, rst, i_rxd_tvalid,i_rxd_tlast, i_rxd_tdata    
     );
 

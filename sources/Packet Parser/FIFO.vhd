@@ -7,6 +7,8 @@
 -- i_rxd_tvalid acts as a wr_enable (controlled by ACL_top). i_rd_valid acts as a read_enable (controlled by the packet parser.)
 -- if i_fifo_invalid is asserted, the FIFO outputs 0 until the FSM inside packet_parser returns to idle. 
 -- This occurs when i_rxd_tlast is asserted inside the packet parser.
+-- i_rxd_t_last also resets the read and write pointers (wr_cnt and rd_cnt).
+
 library ieee;
 use ieee.numeric_std.all;
 use ieee.std_logic_1164.all;
@@ -20,8 +22,9 @@ entity fifo is
     );
 
     port (
-        clk, rst, i_rxd_tvalid, i_rd_valid, i_rxd_tlast, i_fifo_invalid : in std_logic; --wr enable = i_rx_tvalid
+        clk, rst, i_rxd_tvalid, i_rd_valid, i_rxd_tlast, i_fifo_invalid, i_rd_cnt_override : in std_logic; --wr enable = i_rx_tvalid
         i_rx_data : in std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0);
+        i_rd_address : unsigned(fifo_depth - 1 downto 0);
         o_data : out std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- o_rx_data = o_data
         o_wr_cnt : out unsigned(fifo_depth - 1 downto 0);
         o_rxd_tready : out std_logic -- deassert ready when FIFO full.
@@ -36,7 +39,7 @@ architecture rtl of fifo is
         entry_count : unsigned (fifo_depth downto 0);
         full : std_logic;
         empty : std_logic;
-    end record;
+    end record;    
 
     type fifo_type is array ((2 ** fifo_depth - 1) downto 0) of std_logic_vector(fifo_width - 1 downto 0);
 
@@ -66,7 +69,7 @@ begin
         if rst = '0' then
             fifo.rd_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
-            if fifo.empty = '0' and i_rd_valid = '1' then
+            if fifo.empty = '0' and i_rd_valid = '1'  and i_rd_cnt_override = '0' then
                 if fifo.rd_cnt = (2 ** fifo_depth) - 1 then
                     fifo.rd_cnt <= (others => '0');
                 else
@@ -78,15 +81,16 @@ begin
 
     fifo_write_read : process (clk)
     begin
-        if (rising_edge(clk)) then
+        if (rising_edge(clk)) then        
             memory(to_integer(fifo.wr_cnt)) <= i_rx_data;
-        end if;
 
-        if (rising_edge(clk)) then
-            if i_fifo_invalid = '0' then
+            if  i_rd_cnt_override = '1' then
+                o_data_sig <= std_logic_vector(memory(to_integer(i_rd_address)));
+            elsif i_fifo_invalid = '0'  then  --i_rd_valid controls pointer, i_fifo_valid controls what data is output.
                 o_data_sig <= std_logic_vector(memory(to_integer(fifo.rd_cnt)));
-            else
-                o_data_sig <= (others => '0');
+            elsif i_fifo_invalid = '1' then 
+                o_data_sig <= (others => '0'); 
+                
             end if;
         end if;
     end process;
