@@ -8,96 +8,53 @@ test the operation of the FIFO
 
 package ether_frame_pp_pkg;
 
-  task automatic generate_full_ethernet_frame_pp(
+  task automatic generate_basic_ipv4_tcp_frame(
       ref logic clk, rst, i_rxd_tvalid, i_rxd_tlast,
-      ref logic [31:0] i_rxd_tdata,
-      input logic [47:0] dest_mac = 48'h001422012345,
-      input logic [47:0] src_mac = 48'h0014226789AB,
-      input logic [15:0] ether_type = 16'h0800
+      ref logic [31:0] i_rxd_tdata
     );
-    // Constants
-    localparam MAX_PAYLOAD_SIZE = 1500;
-    localparam HEADER_SIZE = 14; // MAC headers + EtherType
-    localparam FRAME_SIZE = HEADER_SIZE + MAX_PAYLOAD_SIZE;
 
-    // Frame storage
-    logic [7:0] frame_data[FRAME_SIZE];
-    int byte_idx;
+    logic [31:0] frame_words[0:7]; // total 8 words
+    localparam int FRAME_WORD_COUNT = 8;
+    localparam int REST_OF_FRAME = 380; //EThernet frame max is 380 words
 
-    // 1. Build frame in memory
-    // Destination MAC (6 bytes)
-    frame_data[0] = dest_mac[47:40];
-    frame_data[1] = dest_mac[39:32];
-    frame_data[2] = dest_mac[31:24];
-    frame_data[3] = dest_mac[23:16];
-    frame_data[4] = dest_mac[15:8];
-    frame_data[5] = dest_mac[7:0];
+               
+    // Ethernet Header (Dest MAC + Src MAC + Ethertype = 14 bytes)
+    frame_words[0] = 32'h8000_207A; // MAC dest [47:16]
+    frame_words[1] = 32'h3F3E_8000; // MAC dest [15:0] + MAC src 1 [47:32]
+    frame_words[2] = 32'h2020_3AAE; // MAC src 2 [31:0]
+    frame_words[3] = 32'h0800_AAAA;  // IPv4 Ethertype + Version,IHL,DSCP,ECN
 
-    // Source MAC (6 bytes)
-    frame_data[6] = src_mac[47:40];
-    frame_data[7] = src_mac[39:32];
-    frame_data[8] = src_mac[31:24];
-    frame_data[9] = src_mac[23:16];
-    frame_data[10] = src_mac[15:8];
-    frame_data[11] = src_mac[7:0];
+    // IPv4 Header (starts at byte 14) 
+    frame_words[4] = 32'hBBBB_BBBB; // Total Length, ID
+    frame_words[5] = 32'hCCCC_9906; // Flags, Fragment offset,TTL, Protocol=6 (TCP)
+    frame_words[6] = 32'hDDDD_DDDD; // Header checksum, source_address 1
+    frame_words[7] = 32'hFFFF_FFFF; // Source address 2, dest add 1
 
-    // EtherType (2 bytes)
-    frame_data[12] = ether_type[15:8];
-    frame_data[13] = ether_type[7:0];
+    i_rxd_tlast = 1'b0;
+    //i_rxd_tdata = 32'h0000_0000;
 
-    // Payload (1500 bytes)
-    // Filled with incrementing pattern
-    for (int i = 0; i < MAX_PAYLOAD_SIZE; i++)
+    for (int i=0; i<FRAME_WORD_COUNT; i++)
     begin
-      frame_data[HEADER_SIZE + i] = i % 256; //header size is 14
-    end
-
-    // Transmit frame 32 bits at a time
-    i_rxd_tvalid = 1'b1;
-    byte_idx = 0;
-
-    while (byte_idx < FRAME_SIZE)
-    begin
-      logic [31:0] current_word;
-      int bytes_remaining = FRAME_SIZE - byte_idx;
-
-      // Construct 32-bit word
-      case (bytes_remaining)
-        1:
-          current_word = {frame_data[byte_idx], 24'h0};
-        2:
-          current_word = {frame_data[byte_idx], frame_data[byte_idx+1], 16'h0};
-        3:
-          current_word = {frame_data[byte_idx], frame_data[byte_idx+1],
-                          frame_data[byte_idx+2], 8'h0};
-        default:
-          current_word = {frame_data[byte_idx], frame_data[byte_idx+1],
-                          frame_data[byte_idx+2], frame_data[byte_idx+3]};
-      endcase
-
       @(posedge clk);
-      i_rxd_tdata = current_word;
-
-      // Start reading after 3 words (12 bytes) are written
-      // if (byte_idx >= 12)
-      // begin
-      //   i_rd_valid = 1'b1;
-      // end
-
-      //Set tlast on last transfer
-      if (bytes_remaining <= 4)
-      begin
-        i_rxd_tlast = 1'b1;
-      end
-
-      byte_idx += 4;
+      #1;
+      i_rxd_tvalid = 1'b1;
+      i_rxd_tdata = frame_words[i];
     end
 
-    // End of frame
+    for (int i=FRAME_WORD_COUNT + 1; i<REST_OF_FRAME; i++)
+    begin
+      @(posedge clk);
+      #1;
+      i_rxd_tdata = $urandom();
+     // i_rxd_tdata = frame_words[i];
+      if (i == REST_OF_FRAME-1)
+        i_rxd_tlast = 1'b1;
+    end
+
     @(posedge clk);
     i_rxd_tvalid = 1'b0;
     i_rxd_tlast = 1'b0;
 
-    $display("[Jumbo Frame] Sent %0d byte Ethernet frame", FRAME_SIZE);
   endtask
+
 endpackage
