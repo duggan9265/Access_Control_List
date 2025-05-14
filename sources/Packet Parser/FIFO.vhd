@@ -1,13 +1,18 @@
 -- vhdl-linter-disable type-resolved
 -- Created by Daniel Duggan, April 2025.
 
--- This FIFO takes the data from ACL top.
--- It act as a buffer to allow data to be sorted through in the packet parser.
+-- This FIFO takes the data from ACL top vi the Packet Parser (PP).
+-- It act as a buffer to allow data to be sorted through in the PP.
 -- Reset (rst) is active low and asynchronous to match the AXIS protocol.
--- i_rxd_tvalid acts as a wr_enable (controlled by ACL_top). i_rd_valid acts as a read_enable (controlled by the packet parser.)
--- if i_fifo_invalid is asserted, the FIFO outputs 0 until the FSM inside packet_parser returns to idle. 
--- This occurs when i_rxd_tlast is asserted inside the packet parser.
--- i_rxd_t_last also resets the read and write pointers (wr_cnt and rd_cnt).
+
+-- i_rxd_tvalid acts as a wr_enable (controlled by ACL_top). i_rd_valid acts as a read_enable (controlled by the PP.)
+-- Data is written when i_rxd_tvalid is high and the FIFO is not full. 
+-- The PP can randomly access the data. This used for rule checking. 
+-- Data is read whe the PP is ready and sets i_rd_valid high. If a rule is broken, i_deny_data is set high. All 0's are output.
+
+
+-- When i_rxd_tlast is asserted, writing stops. Data is read until the Fifo is empty. This is conveyed to the PP which goes to idle.
+-- The read and write pointers (wr_cnt and rd_cnt) are reset to 0.
 
 library ieee;
 use ieee.numeric_std.all;
@@ -22,12 +27,12 @@ entity fifo is
     );
 
     port (
-        clk, rst, i_rxd_tvalid, i_rd_valid, i_rxd_tlast, i_fifo_invalid, i_rd_cnt_override : in std_logic; --wr enable = i_rx_tvalid
+        clk, rst, i_rxd_tvalid, i_rd_valid, i_rxd_tlast, i_deny_data, i_rd_cnt_override : in std_logic; --wr enable = i_rx_tvalid
         i_rx_data : in std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0);
         i_rd_address : unsigned(fifo_depth - 1 downto 0);
         o_data : out std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- o_rx_data = o_data
         o_wr_cnt : out unsigned(fifo_depth - 1 downto 0);
-        o_rxd_tready : out std_logic -- deassert ready when FIFO full.
+        o_rxd_tready, empty : out std_logic -- deassert ready when FIFO full.
     );
 end fifo;
 
@@ -69,8 +74,8 @@ begin
         if rst = '0' then
             fifo.rd_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
-            if fifo.empty = '0' and i_rd_valid = '1'  and i_rd_cnt_override = '0' then
-                if fifo.rd_cnt = (2 ** fifo_depth) - 1 then
+            if i_rd_valid = '1'  and i_rd_cnt_override = '0' then
+                if (fifo.rd_cnt = (2 ** fifo_depth) - 1) or (fifo.empty = '1') then
                     fifo.rd_cnt <= (others => '0');
                 else
                     fifo.rd_cnt <= fifo.rd_cnt + 1;
@@ -86,9 +91,9 @@ begin
 
             if  i_rd_cnt_override = '1' then
                 o_data_sig <= std_logic_vector(memory(to_integer(i_rd_address)));
-            elsif i_fifo_invalid = '0'  then  --i_rd_valid controls pointer, i_fifo_valid controls what data is output.
+            elsif i_deny_data = '0'  then  
                 o_data_sig <= std_logic_vector(memory(to_integer(fifo.rd_cnt)));
-            elsif i_fifo_invalid = '1' then 
+            elsif i_deny_data = '1' then 
                 o_data_sig <= (others => '0'); 
                 
             end if;
@@ -106,11 +111,12 @@ begin
 
     fifo.empty <= '1' when to_integer(fifo.entry_count) = 0 else
     '0';
-    fifo.full <= '1' when to_integer(fifo.entry_count) = 2 ** fifo_depth else
+    fifo.full <= '1' when to_integer(fifo.entry_count) = 2 ** fifo_depth-1 else
     '0';
 
     o_wr_cnt <= fifo.wr_cnt;
     fifo.rxd_tready <= not fifo.full; -- deassert ready when FIFO full.
     o_rxd_tready <= fifo.rxd_tready; -- deassert ready when FIFO full. 
+    empty <= fifo.empty; -- used to set PP back to idle
     o_data <= o_data_sig;
 end architecture rtl;

@@ -13,9 +13,9 @@ package ether_frame_pp_pkg;
       ref logic [31:0] i_rxd_tdata
     );
 
-    logic [31:0] frame_words[0:7]; // total 8 words
-    localparam int FRAME_WORD_COUNT = 8;
-    localparam int REST_OF_FRAME = 380; //EThernet frame max is 380 words
+    logic [31:0] frame_words[0:8]; // total 8 words *UPDATE IF CHANGE NUMBER OF FRAME WORDS*
+    localparam int FRAME_WORD_COUNT = 9;
+    localparam int REST_OF_FRAME = 520;// 380; //EThernet frame max is 380 words
 
                
     // Ethernet Header (Dest MAC + Src MAC + Ethertype = 14 bytes)
@@ -28,7 +28,8 @@ package ether_frame_pp_pkg;
     frame_words[4] = 32'hBBBB_BBBB; // Total Length, ID
     frame_words[5] = 32'hCCCC_9906; // Flags, Fragment offset,TTL, Protocol=6 (TCP)
     frame_words[6] = 32'hDDDD_DDDD; // Header checksum, source_address 1
-    frame_words[7] = 32'hFFFF_FFFF; // Source address 2, dest add 1
+    frame_words[7] = 32'hFFFF_AAAA; // Source address 2, dest add 1
+    frame_words[8] = 32'hBBBB_CCCC; // dest add. 2 + ?
 
     i_rxd_tlast = 1'b0;
     //i_rxd_tdata = 32'h0000_0000;
@@ -46,9 +47,10 @@ package ether_frame_pp_pkg;
       @(posedge clk);
       #1;
       i_rxd_tdata = $urandom();
-     // i_rxd_tdata = frame_words[i];
-      if (i == REST_OF_FRAME-1)
+     
+      if (i == REST_OF_FRAME-100)
         i_rxd_tlast = 1'b1;
+        
     end
 
     @(posedge clk);
