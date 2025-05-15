@@ -23,13 +23,13 @@ package ether_frame_pp_pkg;
     frame_words[0] = 32'h8000_207A; // MAC dest [47:16]
     frame_words[1] = 32'h3F3E_8000; // MAC dest [15:0] + MAC src 1 [47:32]
     frame_words[2] = 32'h2020_3AAE; // MAC src 2 [31:0]
-    frame_words[3] = 32'h0700_AAAA;  // IPv4 Ethertype + Version,IHL,DSCP,ECN
+    frame_words[3] = 32'h0800_AAAA;  // IPv4 Ethertype + Version,IHL,DSCP,ECN
 
     // IPv4 Header (starts at byte 14)
     frame_words[4] = 32'hBBBB_BBBB; // Total Length, ID
     frame_words[5] = 32'hCCCC_9906; // Flags, Fragment offset,TTL, Protocol=6 (TCP)
     frame_words[6] = 32'hDDDD_DDDD; // Header checksum, source_address 1
-    frame_words[7] = 32'hFFFF_AAAA; // Source address 2, dest add 1
+    frame_words[7] = 32'hFFFF_BAAA; // Source address 2, dest add 1
     frame_words[8] = 32'hBBBB_CCCC; // dest add. 2 + ?
     
     

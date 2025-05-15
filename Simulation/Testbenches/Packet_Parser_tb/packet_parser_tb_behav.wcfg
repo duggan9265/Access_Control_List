@@ -13,17 +13,19 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="883.350 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,002.788 ns"></ZoomEndTime>
+      <ZoomStartTime time="55.660 ns"></ZoomStartTime>
+      <ZoomEndTime time="115.661 ns"></ZoomEndTime>
       <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="188"></NameColumnWidth>
       <ValueColumnWidth column_width="72"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="7" />
+   <WVObjectSize size="6" />
    <wave_markers>
-      <marker time="1802474" label="" />
+      <marker time="1314000" label="" />
+      <marker time="2626000" label="" />
+      <marker time="764690" label="" />
    </wave_markers>
    <wvobject fp_name="group120" type="group">
       <obj_property name="label">Generics</obj_property>
@@ -31,10 +33,6 @@
       <wvobject fp_name="/packet_parser_tb/i_rxd_tvalid" type="logic">
          <obj_property name="ElementShortName">i_rxd_tvalid</obj_property>
          <obj_property name="ObjectShortName">i_rxd_tvalid</obj_property>
-      </wvobject>
-      <wvobject fp_name="/packet_parser_tb/i_rxd_tlast" type="logic">
-         <obj_property name="ElementShortName">i_rxd_tlast</obj_property>
-         <obj_property name="ObjectShortName">i_rxd_tlast</obj_property>
       </wvobject>
       <wvobject fp_name="/packet_parser_tb/i_rxd_tdata" type="array">
          <obj_property name="ElementShortName">i_rxd_tdata[31:0]</obj_property>
@@ -48,10 +46,6 @@
          <obj_property name="ElementShortName">o_rxd_tready</obj_property>
          <obj_property name="ObjectShortName">o_rxd_tready</obj_property>
       </wvobject>
-      <wvobject fp_name="/packet_parser_tb/o_fifo_invalid" type="logic">
-         <obj_property name="ElementShortName">o_fifo_invalid</obj_property>
-         <obj_property name="ObjectShortName">o_fifo_invalid</obj_property>
-      </wvobject>
       <wvobject fp_name="/packet_parser_tb/clk_period" type="other">
          <obj_property name="ElementShortName">clk_period</obj_property>
          <obj_property name="ObjectShortName">clk_period</obj_property>
@@ -64,6 +58,14 @@
          <obj_property name="ElementShortName">fifo_depth[31:0]</obj_property>
          <obj_property name="ObjectShortName">fifo_depth[31:0]</obj_property>
       </wvobject>
+      <wvobject fp_name="/packet_parser_tb/i_rxd_tvalid" type="logic">
+         <obj_property name="ElementShortName">i_rxd_tvalid</obj_property>
+         <obj_property name="ObjectShortName">i_rxd_tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/i_rxd_tlast" type="logic">
+         <obj_property name="ElementShortName">i_rxd_tlast</obj_property>
+         <obj_property name="ObjectShortName">i_rxd_tlast</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject fp_name="/packet_parser_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
@@ -73,10 +75,6 @@
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
    </wvobject>
-   <wvobject fp_name="/packet_parser_tb/i_rxd_tvalid" type="logic">
-      <obj_property name="ElementShortName">i_rxd_tvalid</obj_property>
-      <obj_property name="ObjectShortName">i_rxd_tvalid</obj_property>
-   </wvobject>
    <wvobject fp_name="/packet_parser_tb/i_rxd_tlast" type="logic">
       <obj_property name="ElementShortName">i_rxd_tlast</obj_property>
       <obj_property name="ObjectShortName">i_rxd_tlast</obj_property>
@@ -84,11 +82,9 @@
    <wvobject fp_name="group121" type="group">
       <obj_property name="label">FIFO</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="group148" type="group">
          <obj_property name="label">Write Side</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/packet_parser_tb/DUT/FIFO_inst/fifo.wr_cnt" type="array">
             <obj_property name="ElementShortName">.wr_cnt[8:0]</obj_property>
             <obj_property name="ObjectShortName">.wr_cnt[8:0]</obj_property>
@@ -101,6 +97,15 @@
          <wvobject fp_name="/packet_parser_tb/DUT/FIFO_inst/i_rxd_tvalid" type="logic">
             <obj_property name="ElementShortName">i_rxd_tvalid</obj_property>
             <obj_property name="ObjectShortName">i_rxd_tvalid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/packet_parser_tb/DUT/FIFO_inst/fifo.entry_count" type="array">
+            <obj_property name="ElementShortName">.entry_count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">.entry_count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/packet_parser_tb/DUT/FIFO_inst/fifo.full" type="logic">
+            <obj_property name="ElementShortName">.full</obj_property>
+            <obj_property name="ObjectShortName">.full</obj_property>
          </wvobject>
       </wvobject>
       <wvobject fp_name="group147" type="group">
@@ -118,6 +123,18 @@
          <wvobject fp_name="/packet_parser_tb/DUT/FIFO_inst/i_rd_valid" type="logic">
             <obj_property name="ElementShortName">i_rd_valid</obj_property>
             <obj_property name="ObjectShortName">i_rd_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/packet_parser_tb/DUT/FIFO_inst/i_deny_data" type="logic">
+            <obj_property name="ElementShortName">i_deny_data</obj_property>
+            <obj_property name="ObjectShortName">i_deny_data</obj_property>
+         </wvobject>
+         <wvobject fp_name="/packet_parser_tb/DUT/FIFO_inst/i_rd_cnt_override" type="logic">
+            <obj_property name="ElementShortName">i_rd_cnt_override</obj_property>
+            <obj_property name="ObjectShortName">i_rd_cnt_override</obj_property>
+         </wvobject>
+         <wvobject fp_name="/packet_parser_tb/DUT/FIFO_inst/o_data" type="array">
+            <obj_property name="ElementShortName">o_data[31:0]</obj_property>
+            <obj_property name="ObjectShortName">o_data[31:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/packet_parser_tb/DUT/FIFO_inst/fifo.rd_cnt" type="array">
             <obj_property name="ElementShortName">.rd_cnt[8:0]</obj_property>
@@ -151,6 +168,10 @@
             <obj_property name="ElementShortName">i_rxd_tdata[31:0]</obj_property>
             <obj_property name="ObjectShortName">i_rxd_tdata[31:0]</obj_property>
          </wvobject>
+         <wvobject fp_name="/packet_parser_tb/DUT/i_rxd_tlast" type="logic">
+            <obj_property name="ElementShortName">i_rxd_tlast</obj_property>
+            <obj_property name="ObjectShortName">i_rxd_tlast</obj_property>
+         </wvobject>
          <wvobject fp_name="/packet_parser_tb/DUT/o_rxd_tready" type="logic">
             <obj_property name="ElementShortName">o_rxd_tready</obj_property>
             <obj_property name="ObjectShortName">o_rxd_tready</obj_property>
@@ -168,10 +189,14 @@
             <obj_property name="ElementShortName">.o_rd_cnt_override</obj_property>
             <obj_property name="ObjectShortName">.o_rd_cnt_override</obj_property>
          </wvobject>
-         <wvobject fp_name="/packet_parser_tb/DUT/o_fifo_invalid" type="logic">
-            <obj_property name="ElementShortName">o_fifo_invalid</obj_property>
-            <obj_property name="ObjectShortName">o_fifo_invalid</obj_property>
-         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/DUT/IPv4.source" type="array">
+         <obj_property name="ElementShortName">.source[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.source[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/packet_parser_tb/DUT/IPv4.dest" type="array">
+         <obj_property name="ElementShortName">.dest[31:0]</obj_property>
+         <obj_property name="ObjectShortName">.dest[31:0]</obj_property>
       </wvobject>
       <wvobject fp_name="group145" type="group">
          <obj_property name="label">Data Out</obj_property>
@@ -181,9 +206,21 @@
             <obj_property name="ElementShortName">o_rxd_tdata[31:0]</obj_property>
             <obj_property name="ObjectShortName">o_rxd_tdata[31:0]</obj_property>
          </wvobject>
+         <wvobject fp_name="/packet_parser_tb/DUT/fifo.o_rd_valid" type="logic">
+            <obj_property name="ElementShortName">.o_rd_valid</obj_property>
+            <obj_property name="ObjectShortName">.o_rd_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/packet_parser_tb/DUT/data.deny" type="logic">
+            <obj_property name="ElementShortName">.deny</obj_property>
+            <obj_property name="ObjectShortName">.deny</obj_property>
+         </wvobject>
          <wvobject fp_name="/packet_parser_tb/DUT/i_rxd_tlast" type="logic">
             <obj_property name="ElementShortName">i_rxd_tlast</obj_property>
             <obj_property name="ObjectShortName">i_rxd_tlast</obj_property>
+         </wvobject>
+         <wvobject fp_name="/packet_parser_tb/DUT/fifo.empty" type="logic">
+            <obj_property name="ElementShortName">.empty</obj_property>
+            <obj_property name="ObjectShortName">.empty</obj_property>
          </wvobject>
       </wvobject>
    </wvobject>

@@ -56,31 +56,30 @@ architecture rtl of fifo is
 begin
     fifo_write_cnt : process (clk, rst)
     begin
-        if rst = '0' then
-            fifo.wr_cnt <= (others => '0');
-        elsif (rising_edge(clk)) then
-            if fifo.full = '0' and i_rxd_tvalid = '1' then
+        if (rising_edge(clk)) then
+            if rst = '0' then
+                fifo.wr_cnt <= (others => '0');
+
+            elsif fifo.full = '0' and i_rxd_tvalid = '1' then
                 if fifo.wr_cnt = (2 ** fifo_depth) - 1 then
                     fifo.wr_cnt <= (others => '0');
                 elsif i_rxd_tlast = '1' then
                     fifo.wr_cnt <= fifo.wr_cnt; -- hold value so we can assert empty
-                    if fifo.empty = '1' then
-                        fifo.wr_cnt <= (others => '0');
-                    end if;
                 else
                     fifo.wr_cnt <= fifo.wr_cnt + 1;
                 end if;
+            elsif fifo.empty = '1' and i_rxd_tvalid = '0' then
+                fifo.wr_cnt <= (others => '0');
             end if;
-
         end if;
     end process;
 
     fifo_read_cnt : process (clk, rst)
     begin
-        if rst = '0' then
-            fifo.rd_cnt <= (others => '0');
-        elsif (rising_edge(clk)) then
-            if i_rd_valid = '1' and i_rd_cnt_override = '0' then
+        if (rising_edge(clk)) then
+            if rst = '0' then
+                fifo.rd_cnt <= (others => '0');
+            elsif i_rd_valid = '1' and i_rd_cnt_override = '0' then
                 if (fifo.rd_cnt = (2 ** fifo_depth) - 1) or (fifo.empty = '1') then
                     fifo.rd_cnt <= (others => '0');
                 else

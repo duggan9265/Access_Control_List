@@ -2,7 +2,7 @@
 
 module packet_parser_tb;
 
-`timescale 1s/1ns
+`timescale 1ns/1ps
 
 import control_sig_tasks_pkg::*; //::* imports everything from the package
 import ether_frame_pp_pkg::*;
@@ -44,9 +44,9 @@ import ether_frame_pp_pkg::*;
     #5;
    for (int n=0; n<3; n++)
     begin
-    reset(rst);  // Call the reset task
+    reset(clk,rst);  // Call the reset task
     #10;
-    rmv_reset(rst);
+    rmv_reset(clk,rst);
    
     //generate_ethernet_frame(clk,i_rxd_tdata,i_rxd_tvalid,rst,i_rxd_tlast);
     generate_basic_ipv4_tcp_frame(

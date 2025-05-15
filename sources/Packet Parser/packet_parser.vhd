@@ -66,7 +66,7 @@ architecture rtl of packet_parser is
 
     -- Setup the Finite State Machine
     type fsm is
-    (idle, check_ethertype, check_IPv4_protocol, IPv4_source_addr, check_IPv4_source_addr, check_IPv4_des_addr, data_deny, wait_data, 
+    (idle, check_ethertype, check_IPv4_protocol, IPv4_source_addr, check_IPv4_source_addr, check_IPv4_des_addr, data_deny, wait_data,
     allow_data, last_word);
 
     signal fifo : fifo_rec;
@@ -102,103 +102,104 @@ begin
 
     fsm_process : process (clk, rst)
     begin
-        if rst = '0' then
-            state <= idle;
-            data.deny <= '0';
-            fifo.o_rd_cnt_override <= '0';
+        if (rising_edge(clk)) then
+            if rst = '0' then
+                state <= idle;
+                data.deny <= '0';
+                fifo.o_rd_cnt_override <= '0';
 
-        elsif (rising_edge(clk)) then
-            case state is
-                when idle =>
-                    fifo.o_rd_valid <= '0';
-                    if fifo.i_wr_cnt = 3 then
-                        state <= check_ethertype;
-                        fifo.o_rd_address <= to_unsigned(3, fifo_depth); -- we set this so it reads the 3th word. add. 0x3
-                        fifo.o_rd_cnt_override <= '1';
-                    else
-                        state <= state;
-                    end if;
-                when check_ethertype =>
-                    if fifo.i_wr_cnt = 5 then
-                        if fifo.i_data(31 downto 16) = Ethertype_IPv4 then
-                            state <= check_IPv4_protocol;
-                            fifo.o_rd_address <= to_unsigned(5, fifo_depth); -- check protocol. 5th word. add 0x5
+            else
+                case state is
+                    when idle =>
+                        fifo.o_rd_valid <= '0';
+                        if fifo.i_wr_cnt = 3 then
+                            state <= check_ethertype;
+                            fifo.o_rd_address <= to_unsigned(3, fifo_depth); -- we set this so it reads the 3th word. add. 0x3
+                            fifo.o_rd_cnt_override <= '1';
                         else
+                            state <= state;
+                        end if;
+                    when check_ethertype =>
+                        if fifo.i_wr_cnt = 5 then
+                            if fifo.i_data(31 downto 16) = Ethertype_IPv4 then
+                                state <= check_IPv4_protocol;
+                                fifo.o_rd_address <= to_unsigned(5, fifo_depth); -- check protocol. 5th word. add 0x5
+                            else
+                                state <= data_deny;
+                                data.deny <= '1';
+                            end if;
+
+                        end if;
+                    when check_IPv4_protocol =>
+                        if fifo.i_wr_cnt = 7 then
+                            if (fifo.i_data(7 downto 0) = ICMP or
+                                fifo.i_data(7 downto 0) = IPX or
+                                fifo.i_data(7 downto 0) = TCP) then
+                                fifo.o_rd_address <= to_unsigned(6, fifo_depth);
+                                state <= IPv4_source_addr;
+                            else
+                                data.deny <= '1';
+                                state <= data_deny;
+                            end if;
+                        end if;
+                    when IPv4_source_addr =>
+                        if fifo.i_wr_cnt = 9 then
+                            IPv4.source(31 downto 16) <= fifo.i_data(15 downto 0); --source addr. 1
+                            fifo.o_rd_address <= to_unsigned(7, fifo_depth);
+                        elsif fifo.i_wr_cnt = 11 then
+                            IPv4.source(15 downto 0) <= fifo.i_data(31 downto 16); --source addr. 2
+                            IPv4.dest(31 downto 16) <= fifo.i_data(15 downto 0); -- dest addr. 1
+                            fifo.o_rd_address <= to_unsigned(8, fifo_depth);
+                            state <= check_IPv4_source_addr;
+                        else
+                            state <= state;
+                        end if;
+                    when check_IPv4_source_addr =>
+                        if IPv4.source(31 downto 0) /= source_addr then
                             state <= data_deny;
                             data.deny <= '1';
+                        elsif fifo.i_wr_cnt > 12 then
+                            IPv4.dest(15 downto 0) <= fifo.i_data(31 downto 16); -- dest addr. 2
+                            state <= check_IPv4_des_addr;
                         end if;
-
-                    end if;
-                when check_IPv4_protocol =>
-                    if fifo.i_wr_cnt = 7 then
-                        if not (fifo.i_data(7 downto 0) = ICMP or
-                            fifo.i_data(7 downto 0) = IPX or
-                            fifo.i_data(7 downto 0) = TCP) then
-                            data.deny <= '1';
+                    when check_IPv4_des_addr =>
+                        if IPv4.dest(31 downto 0) /= dest_addr then
                             state <= data_deny;
+                            data.deny <= '1';
                         else
-                            fifo.o_rd_address <= to_unsigned(6, fifo_depth);
-                            state <= IPv4_source_addr;
+                            fifo.o_rd_address <= to_unsigned(0, fifo_depth);
+                            fifo.o_rd_cnt_override <= '0'; --ctrls what data is read from FIFO
+                            fifo.o_rd_valid <= '1'; --controls rd_cnt inside FIFO.
+                            state <= wait_data;
                         end if;
-                    end if;
-                when IPv4_source_addr =>
-                    if fifo.i_wr_cnt = 8 then
-                        IPv4.source(31 downto 16) <= fifo.i_data(15 downto 0); --source addr. 1
-                        fifo.o_rd_address <= to_unsigned(7, fifo_depth);
-                    elsif fifo.i_wr_cnt = 9 then
-                        IPv4.source(15 downto 0) <= fifo.i_data(31 downto 16); --source addr. 2
-                        IPv4.dest(31 downto 16) <= fifo.i_data(15 downto 0); -- dest addr. 1
-                        fifo.o_rd_address <= to_unsigned(8, fifo_depth);
-                        state <= check_IPv4_source_addr;
-                    else
-                        state <= state;
-                    end if;
-                when check_IPv4_source_addr =>
-                    if not IPv4.source(31 downto 0) = source_addr then
-                        state <= data_deny;
-                        data.deny <= '1';
-
-                    elsif fifo.i_wr_cnt > 8 then
-                        IPv4.dest(15 downto 0) <= fifo.i_data(31 downto 16); -- dest addr. 2
-                        state <= check_IPv4_des_addr;
-                    end if;
-                when check_IPv4_des_addr =>
-                    if not IPv4.dest(31 downto 0) = dest_addr then
-                        state <= data_deny;
-                        data.deny <= '1';
-                    else
-                        fifo.o_rd_address <= to_unsigned(0, fifo_depth);
-                        fifo.o_rd_cnt_override <= '0'; --ctrls what data is read from FIFO
-                        fifo.o_rd_valid <= '1'; --controls rd_cnt inside FIFO.
-                        state <= wait_data;
-                    end if;
-                when wait_data =>
-                    state <= allow_data; -- to allow data from 0x0 address of FIFO be the input to PP. 
-
-                when allow_data =>
-                    data.data_out <= fifo.i_data(31 downto 0);
-                    if fifo.empty = '1' then
-                        state <= last_word;
-                        fifo.o_rd_valid <= '0';
-                    else
-                        state <= allow_data;
-                    end if;
-                when last_word =>
-                        data.data_out <= fifo.i_data;  -- This state is required to capture last word.         
+                    when wait_data =>
+                        state <= allow_data; -- to allow data from 0x0 address of FIFO be the input to PP. 
+                    when allow_data =>
+                        data.data_out <= fifo.i_data(31 downto 0);
+                        if fifo.empty = '1' then
+                            state <= last_word;
+                            fifo.o_rd_valid <= '0';
+                        else
+                            state <= allow_data;
+                        end if;
+                    when last_word =>
+                        data.data_out <= fifo.i_data; -- This state is required to capture last word.         
                         state <= idle;
-                when data_deny =>
-                    fifo.o_rd_valid <= '1';
-                    fifo.o_rd_cnt_override <= '0';
-                    if fifo.empty = '1' then
+                    when data_deny =>
+                        fifo.o_rd_valid <= '1';
+                        fifo.o_rd_cnt_override <= '0';
+                        data.data_out <= fifo.i_data(31 downto 0);
+                        if fifo.empty = '1' then
+                            state <= idle;
+                            fifo.o_rd_valid <= '0';
+                        end if;
+                    when others =>
                         state <= idle;
-                        fifo.o_rd_valid <= '0';
-                    end if;
-                when others =>
-                    state <= idle;
-            end case;
+                end case;
+            end if;
         end if;
     end process;
-    
+
     o_deny_data <= data.deny;
     o_rxd_tdata <= data.data_out;
 end architecture rtl;

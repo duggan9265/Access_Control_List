@@ -3,12 +3,16 @@
 
 package control_sig_tasks_pkg;
   // Tasks for asserting and deasserting reset.
-  task automatic reset (ref logic rst); //called by reference, type of argument is logic, the argument i.e. signal is the rst.
+  task automatic reset (ref logic clk,rst); //called by reference, type of argument is logic, the argument i.e. signal is the rst.
+    @(posedge clk);
+    #1;
     rst = 0; //Rst is active low
   endtask
   ;
 
-  task automatic rmv_reset (ref logic rst); //deassert
+  task automatic rmv_reset (ref logic clk, rst); //deassert
+    @(posedge clk);
+    #1;
     rst = 1;
   endtask
   ;
