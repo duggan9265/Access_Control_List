@@ -2,7 +2,7 @@
 
 module packet_parser_tb;
 
-`timescale 1s/1ns
+`timescale 1ns/1ps
 
 import control_sig_tasks_pkg::*; //::* imports everything from the package
 import ether_frame_pp_pkg::*;
@@ -17,7 +17,7 @@ import ether_frame_pp_pkg::*;
   logic [C_s_axis_rxd_TDATA_WIDTH - 1:0] i_rxd_tdata;
   //Outputs
   logic [C_s_axis_rxd_TDATA_WIDTH - 1 :0] o_rxd_tdata;
-  logic o_rxd_tready, o_fifo_invalid;
+  logic o_rxd_tready, o_deny_data;
 
   //Instatiate the DUT
   packet_parser DUT(
@@ -28,7 +28,7 @@ import ether_frame_pp_pkg::*;
          .i_rxd_tdata(i_rxd_tdata),
          .o_rxd_tdata(o_rxd_tdata),
          .o_rxd_tready(o_rxd_tready),
-         .o_fifo_invalid(o_fifo_invalid)
+         .o_deny_data(o_deny_data)
        );
 
   //Clock Generation
@@ -42,20 +42,20 @@ import ether_frame_pp_pkg::*;
     i_rxd_tlast    = 1'b0;
     rst=1'b0;
     #5;
-    //rst=1'b1;
-  
-    reset(rst);  // Call the reset task
+   for (int n=0; n<3; n++)
+    begin
+    reset(clk,rst);  // Call the reset task
     #10;
-    rmv_reset(rst);
+    rmv_reset(clk,rst);
    
     //generate_ethernet_frame(clk,i_rxd_tdata,i_rxd_tvalid,rst,i_rxd_tlast);
     generate_basic_ipv4_tcp_frame(
         clk, rst, i_rxd_tvalid,i_rxd_tlast, i_rxd_tdata    
     );
-
+    end;
     // Monitor outputs
-    $monitor("Time=%0t clk=%b rst=%b i_rxd_tvalid=%b  i_rxd_tdata=%h i_rxd_tlast=%b o_rxd_t_data=%h o_rxd_tready=%b o_fifo_invalid=%b",
-             $time, clk, rst, i_rxd_tvalid,  i_rxd_tdata, i_rxd_tlast, o_rxd_tdata, o_rxd_tready, o_fifo_invalid);
+    $monitor("Time=%0t clk=%b rst=%b i_rxd_tvalid=%b  i_rxd_tdata=%h i_rxd_tlast=%b o_rxd_tready=%b o_deny_data=%b",
+             $time, clk, rst, i_rxd_tvalid,  i_rxd_tdata, i_rxd_tlast, o_rxd_tready, o_deny_data);
 
   end
 
