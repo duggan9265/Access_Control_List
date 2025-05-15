@@ -55,6 +55,10 @@ USE ieee.numeric_std.ALL;
 
 ENTITY ACL_ACL_RTL_top_v1_0_0_0 IS
   PORT (
+    rule_ethertype_reg : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+    rule_protocol_reg : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+    rule_src_addr_reg : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    rule_dest_addr_reg : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     s_axi_rxd_aclk : IN STD_LOGIC;
     s_axi_rxd_aresetn : IN STD_LOGIC;
     s_axi_rxd_tready : OUT STD_LOGIC;
@@ -99,6 +103,10 @@ ARCHITECTURE ACL_ACL_RTL_top_v1_0_0_0_arch OF ACL_ACL_RTL_top_v1_0_0_0 IS
       C_m_axi_rxs_START_COUNT : INTEGER
     );
     PORT (
+      rule_ethertype_reg : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+      rule_protocol_reg : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+      rule_src_addr_reg : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      rule_dest_addr_reg : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       s_axi_rxd_aclk : IN STD_LOGIC;
       s_axi_rxd_aresetn : IN STD_LOGIC;
       s_axi_rxd_tready : OUT STD_LOGIC;
@@ -190,6 +198,10 @@ BEGIN
       C_m_axi_rxs_START_COUNT => 32
     )
     PORT MAP (
+      rule_ethertype_reg => rule_ethertype_reg,
+      rule_protocol_reg => rule_protocol_reg,
+      rule_src_addr_reg => rule_src_addr_reg,
+      rule_dest_addr_reg => rule_dest_addr_reg,
       s_axi_rxd_aclk => s_axi_rxd_aclk,
       s_axi_rxd_aresetn => s_axi_rxd_aresetn,
       s_axi_rxd_tready => s_axi_rxd_tready,

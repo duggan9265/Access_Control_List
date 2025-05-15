@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Wed Apr 16 16:26:08 2025" VIVADOVERSION="2023.2">
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Thu May 15 17:59:31 2025" VIVADOVERSION="2023.2">
 
   <SYSTEMINFO ARCH="zynquplus" BOARD="xilinx.com:zcu102:part0:3.3" DEVICE="xczu9eg" NAME="bd_fd73" PACKAGE="ffvb1156" SPEEDGRADE="-2"/>
 
@@ -2117,7 +2117,7 @@
             <CONNECTION INSTANCE="External_Ports" PORT="gtpowergood"/>
           </CONNECTIONS>
         </PORT>
-        <PORT CLKFREQUENCY="156250000" DIR="I" NAME="gtrefclk_n" SIGIS="clk" SIGNAME="pcs_pma_gtrefclk_n">
+        <PORT DIR="I" NAME="gtrefclk_n" SIGIS="clk" SIGNAME="pcs_pma_gtrefclk_n">
           <CONNECTIONS>
             <CONNECTION INSTANCE="bd_fd73_imp" PORT="mgt_clk_clk_n"/>
           </CONNECTIONS>
@@ -2127,7 +2127,7 @@
             <CONNECTION INSTANCE="External_Ports" PORT="gtref_clk_out"/>
           </CONNECTIONS>
         </PORT>
-        <PORT CLKFREQUENCY="156250000" DIR="I" NAME="gtrefclk_p" SIGIS="clk" SIGNAME="pcs_pma_gtrefclk_p">
+        <PORT DIR="I" NAME="gtrefclk_p" SIGIS="clk" SIGNAME="pcs_pma_gtrefclk_p">
           <CONNECTIONS>
             <CONNECTION INSTANCE="bd_fd73_imp" PORT="mgt_clk_clk_p"/>
           </CONNECTIONS>

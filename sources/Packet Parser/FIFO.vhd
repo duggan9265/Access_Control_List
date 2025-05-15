@@ -33,7 +33,7 @@ entity fifo is
         i_rd_address : unsigned(fifo_depth - 1 downto 0);
         o_data : out std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- o_rx_data = o_data
         o_wr_cnt : out unsigned(fifo_depth - 1 downto 0);
-        o_rxd_tready, empty : out std_logic -- deassert ready when FIFO full.
+         empty : out std_logic -- deassert ready when FIFO full.o_rxd_tready,
     );
 end fifo;
 
@@ -123,7 +123,7 @@ begin
 
     o_wr_cnt <= fifo.wr_cnt;
     fifo.rxd_tready <= not fifo.full; -- deassert ready when FIFO full.
-    o_rxd_tready <= fifo.rxd_tready; -- deassert ready when FIFO full. 
+    --o_rxd_tready <= fifo.rxd_tready; -- deassert ready when FIFO full. 
     empty <= fifo.empty; -- used to set PP back to idle
     o_data <= o_data_sig;
 end architecture rtl;

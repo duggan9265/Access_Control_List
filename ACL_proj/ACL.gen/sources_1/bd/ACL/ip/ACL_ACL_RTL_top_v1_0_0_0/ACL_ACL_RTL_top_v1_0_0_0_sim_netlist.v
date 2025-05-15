@@ -2,7 +2,7 @@
 // Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2023.2 (win64) Build 4029153 Fri Oct 13 20:14:34 MDT 2023
-// Date        : Wed Apr 16 16:27:01 2025
+// Date        : Thu May 15 18:00:30 2025
 // Host        : Lap-DaDu-050 running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode funcsim
 //               c:/ACL_Garden/Access_Control_List/ACL_proj/ACL.gen/sources_1/bd/ACL/ip/ACL_ACL_RTL_top_v1_0_0_0/ACL_ACL_RTL_top_v1_0_0_0_sim_netlist.v
@@ -17,7 +17,11 @@
 (* x_core_info = "ACL_RTL_top_v1_0,Vivado 2023.2" *) 
 (* NotValidForBitStream *)
 module ACL_ACL_RTL_top_v1_0_0_0
-   (s_axi_rxd_aclk,
+   (rule_ethertype_reg,
+    rule_protocol_reg,
+    rule_src_addr_reg,
+    rule_dest_addr_reg,
+    s_axi_rxd_aclk,
     s_axi_rxd_aresetn,
     s_axi_rxd_tready,
     s_axi_rxd_tdata,
@@ -45,6 +49,10 @@ module ACL_ACL_RTL_top_v1_0_0_0
     m_axi_rxs_tstrb,
     m_axi_rxs_tlast,
     m_axi_rxs_tready);
+  input [15:0]rule_ethertype_reg;
+  input [7:0]rule_protocol_reg;
+  input [31:0]rule_src_addr_reg;
+  input [31:0]rule_dest_addr_reg;
   (* x_interface_info = "xilinx.com:signal:clock:1.0 s_axi_rxd_aclk CLK" *) (* x_interface_parameter = "XIL_INTERFACENAME s_axi_rxd_aclk, ASSOCIATED_BUSIF s_axi_rxd, ASSOCIATED_RESET s_axi_rxd_aresetn, FREQ_HZ 99990005, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN ACL_zusp_ps_0_pl_clk0, INSERT_VIP 0" *) input s_axi_rxd_aclk;
   (* x_interface_info = "xilinx.com:signal:reset:1.0 s_axi_rxd_aresetn RST" *) (* x_interface_parameter = "XIL_INTERFACENAME s_axi_rxd_aresetn, POLARITY ACTIVE_LOW, INSERT_VIP 0" *) input s_axi_rxd_aresetn;
   (* x_interface_info = "xilinx.com:interface:axis:1.0 s_axi_rxd TREADY" *) (* x_interface_parameter = "XIL_INTERFACENAME s_axi_rxd, TDATA_NUM_BYTES 4, TDEST_WIDTH 0, TID_WIDTH 0, TUSER_WIDTH 0, HAS_TREADY 1, HAS_TSTRB 1, HAS_TKEEP 0, HAS_TLAST 1, FREQ_HZ 99990005, PHASE 0.0, CLK_DOMAIN ACL_zusp_ps_0_pl_clk0, LAYERED_METADATA undef, INSERT_VIP 0" *) output s_axi_rxd_tready;
@@ -88,6 +96,11 @@ module ACL_ACL_RTL_top_v1_0_0_0
   wire m_axi_rxs_tlast;
   wire m_axi_rxs_tready;
   wire m_axi_rxs_tvalid;
+  wire s_axi_rxd_aclk;
+  wire s_axi_rxd_aresetn;
+  wire s_axi_rxd_tlast;
+  wire s_axi_rxd_tready;
+  wire s_axi_rxd_tvalid;
   wire s_axi_rxs_aclk;
   wire s_axi_rxs_aresetn;
   wire s_axi_rxs_tlast;
@@ -160,7 +173,6 @@ module ACL_ACL_RTL_top_v1_0_0_0
   assign m_axi_rxs_tstrb[2] = \<const1> ;
   assign m_axi_rxs_tstrb[1] = \<const1> ;
   assign m_axi_rxs_tstrb[0] = \<const1> ;
-  assign s_axi_rxd_tready = \<const1> ;
   GND GND
        (.G(\<const0> ));
   ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0 U0
@@ -176,6 +188,11 @@ module ACL_ACL_RTL_top_v1_0_0_0
         .m_axi_rxs_tlast(m_axi_rxs_tlast),
         .m_axi_rxs_tready(m_axi_rxs_tready),
         .m_axi_rxs_tvalid(m_axi_rxs_tvalid),
+        .s_axi_rxd_aclk(s_axi_rxd_aclk),
+        .s_axi_rxd_aresetn(s_axi_rxd_aresetn),
+        .s_axi_rxd_tlast(s_axi_rxd_tlast),
+        .s_axi_rxd_tready(s_axi_rxd_tready),
+        .s_axi_rxd_tvalid(s_axi_rxd_tvalid),
         .s_axi_rxs_aclk(s_axi_rxs_aclk),
         .s_axi_rxs_aresetn(s_axi_rxs_aresetn),
         .s_axi_rxs_tlast(s_axi_rxs_tlast),
@@ -187,7 +204,8 @@ endmodule
 
 (* ORIG_REF_NAME = "ACL_RTL_top_v1_0" *) 
 module ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0
-   (s_axi_rxs_tready,
+   (s_axi_rxd_tready,
+    s_axi_rxs_tready,
     m_axi_rxd_tvalid,
     m_axi_rxd_tdata,
     m_axi_rxd_tlast,
@@ -196,14 +214,19 @@ module ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0
     m_axi_rxs_tlast,
     m_axi_rxd_aclk,
     m_axi_rxs_aclk,
+    s_axi_rxd_aclk,
     s_axi_rxs_aclk,
+    s_axi_rxd_tvalid,
     s_axi_rxs_tvalid,
     m_axi_rxd_tready,
     m_axi_rxd_aresetn,
     m_axi_rxs_tready,
     m_axi_rxs_aresetn,
+    s_axi_rxd_aresetn,
     s_axi_rxs_aresetn,
+    s_axi_rxd_tlast,
     s_axi_rxs_tlast);
+  output s_axi_rxd_tready;
   output s_axi_rxs_tready;
   output m_axi_rxd_tvalid;
   output [3:0]m_axi_rxd_tdata;
@@ -213,13 +236,17 @@ module ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0
   output m_axi_rxs_tlast;
   input m_axi_rxd_aclk;
   input m_axi_rxs_aclk;
+  input s_axi_rxd_aclk;
   input s_axi_rxs_aclk;
+  input s_axi_rxd_tvalid;
   input s_axi_rxs_tvalid;
   input m_axi_rxd_tready;
   input m_axi_rxd_aresetn;
   input m_axi_rxs_tready;
   input m_axi_rxs_aresetn;
+  input s_axi_rxd_aresetn;
   input s_axi_rxs_aresetn;
+  input s_axi_rxd_tlast;
   input s_axi_rxs_tlast;
 
   wire m_axi_rxd_aclk;
@@ -234,6 +261,11 @@ module ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0
   wire m_axi_rxs_tlast;
   wire m_axi_rxs_tready;
   wire m_axi_rxs_tvalid;
+  wire s_axi_rxd_aclk;
+  wire s_axi_rxd_aresetn;
+  wire s_axi_rxd_tlast;
+  wire s_axi_rxd_tready;
+  wire s_axi_rxd_tvalid;
   wire s_axi_rxs_aclk;
   wire s_axi_rxs_aresetn;
   wire s_axi_rxs_tlast;
@@ -254,6 +286,12 @@ module ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0
         .m_axi_rxs_tlast(m_axi_rxs_tlast),
         .m_axi_rxs_tready(m_axi_rxs_tready),
         .m_axi_rxs_tvalid(m_axi_rxs_tvalid));
+  ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxd ACL_RTL_top_v1_0_s_axi_rxd_inst
+       (.s_axi_rxd_aclk(s_axi_rxd_aclk),
+        .s_axi_rxd_aresetn(s_axi_rxd_aresetn),
+        .s_axi_rxd_tlast(s_axi_rxd_tlast),
+        .s_axi_rxd_tready(s_axi_rxd_tready),
+        .s_axi_rxd_tvalid(s_axi_rxd_tvalid));
   ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxs ACL_RTL_top_v1_0_s_axi_rxs_inst
        (.s_axi_rxs_aclk(s_axi_rxs_aclk),
         .s_axi_rxs_aresetn(s_axi_rxs_aresetn),
@@ -814,6 +852,65 @@ module ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_m_axi_rxs
         .R(axis_tvalid_delay_i_1__0_n_0));
 endmodule
 
+(* ORIG_REF_NAME = "ACL_RTL_top_v1_0_s_axi_rxd" *) 
+module ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxd
+   (s_axi_rxd_tready,
+    s_axi_rxd_aclk,
+    s_axi_rxd_tvalid,
+    s_axi_rxd_aresetn,
+    s_axi_rxd_tlast);
+  output s_axi_rxd_tready;
+  input s_axi_rxd_aclk;
+  input s_axi_rxd_tvalid;
+  input s_axi_rxd_aresetn;
+  input s_axi_rxd_tlast;
+
+  wire mst_exec_state_i_1_n_0;
+  wire mst_exec_state_i_2_n_0;
+  wire s_axi_rxd_aclk;
+  wire s_axi_rxd_aresetn;
+  wire s_axi_rxd_tlast;
+  wire s_axi_rxd_tready;
+  wire s_axi_rxd_tvalid;
+  wire writes_done;
+  wire writes_done_i_1_n_0;
+
+  LUT1 #(
+    .INIT(2'h1)) 
+    mst_exec_state_i_1
+       (.I0(s_axi_rxd_aresetn),
+        .O(mst_exec_state_i_1_n_0));
+  (* SOFT_HLUTNM = "soft_lutpair12" *) 
+  LUT3 #(
+    .INIT(8'h74)) 
+    mst_exec_state_i_2
+       (.I0(writes_done),
+        .I1(s_axi_rxd_tready),
+        .I2(s_axi_rxd_tvalid),
+        .O(mst_exec_state_i_2_n_0));
+  FDRE mst_exec_state_reg
+       (.C(s_axi_rxd_aclk),
+        .CE(1'b1),
+        .D(mst_exec_state_i_2_n_0),
+        .Q(s_axi_rxd_tready),
+        .R(mst_exec_state_i_1_n_0));
+  (* SOFT_HLUTNM = "soft_lutpair12" *) 
+  LUT4 #(
+    .INIT(16'hBFAA)) 
+    writes_done_i_1
+       (.I0(s_axi_rxd_tlast),
+        .I1(s_axi_rxd_tready),
+        .I2(s_axi_rxd_tvalid),
+        .I3(writes_done),
+        .O(writes_done_i_1_n_0));
+  FDRE writes_done_reg
+       (.C(s_axi_rxd_aclk),
+        .CE(1'b1),
+        .D(writes_done_i_1_n_0),
+        .Q(writes_done),
+        .R(mst_exec_state_i_1_n_0));
+endmodule
+
 (* ORIG_REF_NAME = "ACL_RTL_top_v1_0_s_axi_rxs" *) 
 module ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxs
    (s_axi_rxs_tready,
@@ -827,50 +924,50 @@ module ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxs
   input s_axi_rxs_aresetn;
   input s_axi_rxs_tlast;
 
-  wire mst_exec_state_i_1_n_0;
-  wire mst_exec_state_i_2_n_0;
+  wire mst_exec_state_i_2__0_n_0;
+  wire p_0_in;
   wire s_axi_rxs_aclk;
   wire s_axi_rxs_aresetn;
   wire s_axi_rxs_tlast;
   wire s_axi_rxs_tready;
   wire s_axi_rxs_tvalid;
-  wire writes_done_i_1_n_0;
+  wire writes_done_i_1__0_n_0;
   wire writes_done_reg_n_0;
 
   LUT1 #(
     .INIT(2'h1)) 
-    mst_exec_state_i_1
+    mst_exec_state_i_1__0
        (.I0(s_axi_rxs_aresetn),
-        .O(mst_exec_state_i_1_n_0));
-  (* SOFT_HLUTNM = "soft_lutpair12" *) 
+        .O(p_0_in));
+  (* SOFT_HLUTNM = "soft_lutpair13" *) 
   LUT3 #(
     .INIT(8'h74)) 
-    mst_exec_state_i_2
+    mst_exec_state_i_2__0
        (.I0(writes_done_reg_n_0),
         .I1(s_axi_rxs_tready),
         .I2(s_axi_rxs_tvalid),
-        .O(mst_exec_state_i_2_n_0));
+        .O(mst_exec_state_i_2__0_n_0));
   FDRE mst_exec_state_reg
        (.C(s_axi_rxs_aclk),
         .CE(1'b1),
-        .D(mst_exec_state_i_2_n_0),
+        .D(mst_exec_state_i_2__0_n_0),
         .Q(s_axi_rxs_tready),
-        .R(mst_exec_state_i_1_n_0));
-  (* SOFT_HLUTNM = "soft_lutpair12" *) 
+        .R(p_0_in));
+  (* SOFT_HLUTNM = "soft_lutpair13" *) 
   LUT4 #(
     .INIT(16'hBFAA)) 
-    writes_done_i_1
+    writes_done_i_1__0
        (.I0(s_axi_rxs_tlast),
         .I1(s_axi_rxs_tready),
         .I2(s_axi_rxs_tvalid),
         .I3(writes_done_reg_n_0),
-        .O(writes_done_i_1_n_0));
+        .O(writes_done_i_1__0_n_0));
   FDRE writes_done_reg
        (.C(s_axi_rxs_aclk),
         .CE(1'b1),
-        .D(writes_done_i_1_n_0),
+        .D(writes_done_i_1__0_n_0),
         .Q(writes_done_reg_n_0),
-        .R(mst_exec_state_i_1_n_0));
+        .R(p_0_in));
 endmodule
 `ifndef GLBL
 `define GLBL

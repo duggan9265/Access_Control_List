@@ -38,7 +38,12 @@ entity packet_parser is
         clk, rst, i_rxd_tvalid, i_rxd_tlast : in std_logic; --will connect to FIFO
         i_rxd_tdata : in std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- connected to FIFO
         o_rxd_tdata : out std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- connected to ACL_rule_matcher       
-        o_rxd_tready, o_deny_data : out std_logic
+        o_deny_data : out std_logic; --o_rxd_tready,
+
+        rule_ethertype_reg : in std_logic_vector(15 downto 0);
+        rule_protocol_reg  : in std_logic_vector(7 downto 0);
+        rule_src_addr_reg  : in std_logic_vector(31 downto 0);
+        rule_dest_addr_reg : in std_logic_vector(31 downto 0)
     );
 end packet_parser;
 
@@ -74,10 +79,10 @@ architecture rtl of packet_parser is
     signal data : process_data;
     signal IPv4 : IPv4_source_dest;
 
-    constant Ethertype_IPv4 : std_logic_vector(15 downto 0) := x"0800";
-    constant ICMP : std_logic_vector(7 downto 0) := x"01";
-    constant IPX : std_logic_vector(7 downto 0) := x"6f";
-    constant TCP : std_logic_vector(7 downto 0) := x"06";
+    -- constant Ethertype_IPv4 : std_logic_vector(15 downto 0) := x"0800";
+    -- constant ICMP : std_logic_vector(7 downto 0) := x"01";
+    -- constant IPX : std_logic_vector(7 downto 0) := x"6f";
+    -- constant TCP : std_logic_vector(7 downto 0) := x"06";
     constant source_addr : std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0) := x"DDDD_FFFF";
     constant dest_addr : std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0) := x"AAAA_BBBB";
 
@@ -96,8 +101,8 @@ begin
             i_rd_cnt_override => fifo.o_rd_cnt_override,
             o_data => fifo.i_data,
             o_wr_cnt => fifo.i_wr_cnt,
-            empty => fifo.empty,
-            o_rxd_tready => o_rxd_tready -- deasserted when FIFO is full.
+            empty => fifo.empty
+           -- o_rxd_tready => o_rxd_tready -- deasserted when FIFO is full.
         );
 
     fsm_process : process (clk, rst)
@@ -121,7 +126,7 @@ begin
                         end if;
                     when check_ethertype =>
                         if fifo.i_wr_cnt = 5 then
-                            if fifo.i_data(31 downto 16) = Ethertype_IPv4 then
+                            if fifo.i_data(31 downto 16) = rule_ethertype_reg then
                                 state <= check_IPv4_protocol;
                                 fifo.o_rd_address <= to_unsigned(5, fifo_depth); -- check protocol. 5th word. add 0x5
                             else
@@ -132,9 +137,7 @@ begin
                         end if;
                     when check_IPv4_protocol =>
                         if fifo.i_wr_cnt = 7 then
-                            if (fifo.i_data(7 downto 0) = ICMP or
-                                fifo.i_data(7 downto 0) = IPX or
-                                fifo.i_data(7 downto 0) = TCP) then
+                            if (fifo.i_data(7 downto 0) = rule_protocol_reg) then
                                 fifo.o_rd_address <= to_unsigned(6, fifo_depth);
                                 state <= IPv4_source_addr;
                             else
@@ -155,7 +158,7 @@ begin
                             state <= state;
                         end if;
                     when check_IPv4_source_addr =>
-                        if IPv4.source(31 downto 0) /= source_addr then
+                        if IPv4.source(31 downto 0) /= rule_src_addr_reg then
                             state <= data_deny;
                             data.deny <= '1';
                         elsif fifo.i_wr_cnt > 12 then
@@ -163,7 +166,7 @@ begin
                             state <= check_IPv4_des_addr;
                         end if;
                     when check_IPv4_des_addr =>
-                        if IPv4.dest(31 downto 0) /= dest_addr then
+                        if IPv4.dest(31 downto 0) /= rule_dest_addr_reg then
                             state <= data_deny;
                             data.deny <= '1';
                         else

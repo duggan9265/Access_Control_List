@@ -2,7 +2,7 @@
 -- Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2023.2 (win64) Build 4029153 Fri Oct 13 20:14:34 MDT 2023
--- Date        : Wed Apr 16 16:27:01 2025
+-- Date        : Thu May 15 18:00:30 2025
 -- Host        : Lap-DaDu-050 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim
 --               c:/ACL_Garden/Access_Control_List/ACL_proj/ACL.gen/sources_1/bd/ACL/ip/ACL_ACL_RTL_top_v1_0_0_0/ACL_ACL_RTL_top_v1_0_0_0_sim_netlist.vhdl
@@ -739,6 +739,79 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
+entity ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxd is
+  port (
+    s_axi_rxd_tready : out STD_LOGIC;
+    s_axi_rxd_aclk : in STD_LOGIC;
+    s_axi_rxd_tvalid : in STD_LOGIC;
+    s_axi_rxd_aresetn : in STD_LOGIC;
+    s_axi_rxd_tlast : in STD_LOGIC
+  );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxd : entity is "ACL_RTL_top_v1_0_s_axi_rxd";
+end ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxd;
+
+architecture STRUCTURE of ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxd is
+  signal mst_exec_state_i_1_n_0 : STD_LOGIC;
+  signal mst_exec_state_i_2_n_0 : STD_LOGIC;
+  signal \^s_axi_rxd_tready\ : STD_LOGIC;
+  signal writes_done : STD_LOGIC;
+  signal writes_done_i_1_n_0 : STD_LOGIC;
+  attribute SOFT_HLUTNM : string;
+  attribute SOFT_HLUTNM of mst_exec_state_i_2 : label is "soft_lutpair12";
+  attribute SOFT_HLUTNM of writes_done_i_1 : label is "soft_lutpair12";
+begin
+  s_axi_rxd_tready <= \^s_axi_rxd_tready\;
+mst_exec_state_i_1: unisim.vcomponents.LUT1
+    generic map(
+      INIT => X"1"
+    )
+        port map (
+      I0 => s_axi_rxd_aresetn,
+      O => mst_exec_state_i_1_n_0
+    );
+mst_exec_state_i_2: unisim.vcomponents.LUT3
+    generic map(
+      INIT => X"74"
+    )
+        port map (
+      I0 => writes_done,
+      I1 => \^s_axi_rxd_tready\,
+      I2 => s_axi_rxd_tvalid,
+      O => mst_exec_state_i_2_n_0
+    );
+mst_exec_state_reg: unisim.vcomponents.FDRE
+     port map (
+      C => s_axi_rxd_aclk,
+      CE => '1',
+      D => mst_exec_state_i_2_n_0,
+      Q => \^s_axi_rxd_tready\,
+      R => mst_exec_state_i_1_n_0
+    );
+writes_done_i_1: unisim.vcomponents.LUT4
+    generic map(
+      INIT => X"BFAA"
+    )
+        port map (
+      I0 => s_axi_rxd_tlast,
+      I1 => \^s_axi_rxd_tready\,
+      I2 => s_axi_rxd_tvalid,
+      I3 => writes_done,
+      O => writes_done_i_1_n_0
+    );
+writes_done_reg: unisim.vcomponents.FDRE
+     port map (
+      C => s_axi_rxd_aclk,
+      CE => '1',
+      D => writes_done_i_1_n_0,
+      Q => writes_done,
+      R => mst_exec_state_i_1_n_0
+    );
+end STRUCTURE;
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+library UNISIM;
+use UNISIM.VCOMPONENTS.ALL;
 entity ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxs is
   port (
     s_axi_rxs_tready : out STD_LOGIC;
@@ -752,25 +825,25 @@ entity ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxs is
 end ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxs;
 
 architecture STRUCTURE of ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxs is
-  signal mst_exec_state_i_1_n_0 : STD_LOGIC;
-  signal mst_exec_state_i_2_n_0 : STD_LOGIC;
+  signal \mst_exec_state_i_2__0_n_0\ : STD_LOGIC;
+  signal p_0_in : STD_LOGIC;
   signal \^s_axi_rxs_tready\ : STD_LOGIC;
-  signal writes_done_i_1_n_0 : STD_LOGIC;
+  signal \writes_done_i_1__0_n_0\ : STD_LOGIC;
   signal writes_done_reg_n_0 : STD_LOGIC;
   attribute SOFT_HLUTNM : string;
-  attribute SOFT_HLUTNM of mst_exec_state_i_2 : label is "soft_lutpair12";
-  attribute SOFT_HLUTNM of writes_done_i_1 : label is "soft_lutpair12";
+  attribute SOFT_HLUTNM of \mst_exec_state_i_2__0\ : label is "soft_lutpair13";
+  attribute SOFT_HLUTNM of \writes_done_i_1__0\ : label is "soft_lutpair13";
 begin
   s_axi_rxs_tready <= \^s_axi_rxs_tready\;
-mst_exec_state_i_1: unisim.vcomponents.LUT1
+\mst_exec_state_i_1__0\: unisim.vcomponents.LUT1
     generic map(
       INIT => X"1"
     )
         port map (
       I0 => s_axi_rxs_aresetn,
-      O => mst_exec_state_i_1_n_0
+      O => p_0_in
     );
-mst_exec_state_i_2: unisim.vcomponents.LUT3
+\mst_exec_state_i_2__0\: unisim.vcomponents.LUT3
     generic map(
       INIT => X"74"
     )
@@ -778,17 +851,17 @@ mst_exec_state_i_2: unisim.vcomponents.LUT3
       I0 => writes_done_reg_n_0,
       I1 => \^s_axi_rxs_tready\,
       I2 => s_axi_rxs_tvalid,
-      O => mst_exec_state_i_2_n_0
+      O => \mst_exec_state_i_2__0_n_0\
     );
 mst_exec_state_reg: unisim.vcomponents.FDRE
      port map (
       C => s_axi_rxs_aclk,
       CE => '1',
-      D => mst_exec_state_i_2_n_0,
+      D => \mst_exec_state_i_2__0_n_0\,
       Q => \^s_axi_rxs_tready\,
-      R => mst_exec_state_i_1_n_0
+      R => p_0_in
     );
-writes_done_i_1: unisim.vcomponents.LUT4
+\writes_done_i_1__0\: unisim.vcomponents.LUT4
     generic map(
       INIT => X"BFAA"
     )
@@ -797,15 +870,15 @@ writes_done_i_1: unisim.vcomponents.LUT4
       I1 => \^s_axi_rxs_tready\,
       I2 => s_axi_rxs_tvalid,
       I3 => writes_done_reg_n_0,
-      O => writes_done_i_1_n_0
+      O => \writes_done_i_1__0_n_0\
     );
 writes_done_reg: unisim.vcomponents.FDRE
      port map (
       C => s_axi_rxs_aclk,
       CE => '1',
-      D => writes_done_i_1_n_0,
+      D => \writes_done_i_1__0_n_0\,
       Q => writes_done_reg_n_0,
-      R => mst_exec_state_i_1_n_0
+      R => p_0_in
     );
 end STRUCTURE;
 library IEEE;
@@ -814,6 +887,7 @@ library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
 entity ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0 is
   port (
+    s_axi_rxd_tready : out STD_LOGIC;
     s_axi_rxs_tready : out STD_LOGIC;
     m_axi_rxd_tvalid : out STD_LOGIC;
     m_axi_rxd_tdata : out STD_LOGIC_VECTOR ( 3 downto 0 );
@@ -823,13 +897,17 @@ entity ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0 is
     m_axi_rxs_tlast : out STD_LOGIC;
     m_axi_rxd_aclk : in STD_LOGIC;
     m_axi_rxs_aclk : in STD_LOGIC;
+    s_axi_rxd_aclk : in STD_LOGIC;
     s_axi_rxs_aclk : in STD_LOGIC;
+    s_axi_rxd_tvalid : in STD_LOGIC;
     s_axi_rxs_tvalid : in STD_LOGIC;
     m_axi_rxd_tready : in STD_LOGIC;
     m_axi_rxd_aresetn : in STD_LOGIC;
     m_axi_rxs_tready : in STD_LOGIC;
     m_axi_rxs_aresetn : in STD_LOGIC;
+    s_axi_rxd_aresetn : in STD_LOGIC;
     s_axi_rxs_aresetn : in STD_LOGIC;
+    s_axi_rxd_tlast : in STD_LOGIC;
     s_axi_rxs_tlast : in STD_LOGIC
   );
   attribute ORIG_REF_NAME : string;
@@ -856,6 +934,14 @@ ACL_RTL_top_v1_0_m_axi_rxs_inst: entity work.ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_to
       m_axi_rxs_tready => m_axi_rxs_tready,
       m_axi_rxs_tvalid => m_axi_rxs_tvalid
     );
+ACL_RTL_top_v1_0_s_axi_rxd_inst: entity work.ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxd
+     port map (
+      s_axi_rxd_aclk => s_axi_rxd_aclk,
+      s_axi_rxd_aresetn => s_axi_rxd_aresetn,
+      s_axi_rxd_tlast => s_axi_rxd_tlast,
+      s_axi_rxd_tready => s_axi_rxd_tready,
+      s_axi_rxd_tvalid => s_axi_rxd_tvalid
+    );
 ACL_RTL_top_v1_0_s_axi_rxs_inst: entity work.ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0_s_axi_rxs
      port map (
       s_axi_rxs_aclk => s_axi_rxs_aclk,
@@ -871,6 +957,10 @@ library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
 entity ACL_ACL_RTL_top_v1_0_0_0 is
   port (
+    rule_ethertype_reg : in STD_LOGIC_VECTOR ( 15 downto 0 );
+    rule_protocol_reg : in STD_LOGIC_VECTOR ( 7 downto 0 );
+    rule_src_addr_reg : in STD_LOGIC_VECTOR ( 31 downto 0 );
+    rule_dest_addr_reg : in STD_LOGIC_VECTOR ( 31 downto 0 );
     s_axi_rxd_aclk : in STD_LOGIC;
     s_axi_rxd_aresetn : in STD_LOGIC;
     s_axi_rxd_tready : out STD_LOGIC;
@@ -1026,7 +1116,6 @@ begin
   m_axi_rxs_tstrb(2) <= \<const1>\;
   m_axi_rxs_tstrb(1) <= \<const1>\;
   m_axi_rxs_tstrb(0) <= \<const1>\;
-  s_axi_rxd_tready <= \<const1>\;
 GND: unisim.vcomponents.GND
      port map (
       G => \<const0>\
@@ -1045,6 +1134,11 @@ U0: entity work.ACL_ACL_RTL_top_v1_0_0_0_ACL_RTL_top_v1_0
       m_axi_rxs_tlast => m_axi_rxs_tlast,
       m_axi_rxs_tready => m_axi_rxs_tready,
       m_axi_rxs_tvalid => m_axi_rxs_tvalid,
+      s_axi_rxd_aclk => s_axi_rxd_aclk,
+      s_axi_rxd_aresetn => s_axi_rxd_aresetn,
+      s_axi_rxd_tlast => s_axi_rxd_tlast,
+      s_axi_rxd_tready => s_axi_rxd_tready,
+      s_axi_rxd_tvalid => s_axi_rxd_tvalid,
       s_axi_rxs_aclk => s_axi_rxs_aclk,
       s_axi_rxs_aresetn => s_axi_rxs_aresetn,
       s_axi_rxs_tlast => s_axi_rxs_tlast,
