@@ -1,7 +1,7 @@
 -- vhdl-linter-disable type-resolved
 -- Created by Daniel Duggan, April 2025.
 
--- This FIFO takes the data from ACL top vi the Packet Parser (PP).
+-- This FIFO takes the data from ACL top via the Packet Parser (PP).
 -- It act as a buffer to allow data to be sorted through in the PP.
 -- Reset (rst) is active low and asynchronous to match the AXIS protocol.
 
@@ -9,9 +9,9 @@
 -- Data is written when i_rxd_tvalid is high and the FIFO is not full. 
 -- The PP can randomly access the data. This used for rule checking. 
 -- Data is read whe the PP is ready and sets i_rd_valid high. If a rule is broken, i_deny_data is set high. All 0's are output.
-
-
--- When i_rxd_tlast is asserted, writing stops. Data is read until the Fifo is empty. This is conveyed to the PP which goes to idle.
+-- When i_rxd_tlast is asserted, the wr_cnt value is held constant. 
+-- Data is read until the Fifo is empty. The fifo.empty signal is assserted.
+-- This is conveyed to the PP which goes to idle, whilst the wr_cnt is returned to 0.
 -- The read and write pointers (wr_cnt and rd_cnt) are reset to 0.
 
 library ieee;
@@ -22,6 +22,7 @@ entity fifo is
     generic (
 
         C_s_axis_rxd_TDATA_WIDTH : integer := 32; -- Parameters of Axi Slave Bus Interface s_axis_rxd.
+        fifo_full : integer := 380; -- Ethernet frame has maximum 380 words
         fifo_depth : integer := 9; -- have 380 words max, this gives 512 addressess (2^9)
         fifo_width : integer := 32 -- width of each word.
     );
@@ -44,7 +45,7 @@ architecture rtl of fifo is
         entry_count : unsigned (fifo_depth downto 0);
         full : std_logic;
         empty : std_logic;
-    end record;    
+    end record;
 
     type fifo_type is array ((2 ** fifo_depth - 1) downto 0) of std_logic_vector(fifo_width - 1 downto 0);
 
@@ -59,8 +60,13 @@ begin
             fifo.wr_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
             if fifo.full = '0' and i_rxd_tvalid = '1' then
-                if fifo.wr_cnt = (2 ** fifo_depth) - 1 or i_rxd_tlast = '1' then
+                if fifo.wr_cnt = (2 ** fifo_depth) - 1 then
                     fifo.wr_cnt <= (others => '0');
+                elsif i_rxd_tlast = '1' then
+                    fifo.wr_cnt <= fifo.wr_cnt; -- hold value so we can assert empty
+                    if fifo.empty = '1' then
+                        fifo.wr_cnt <= (others => '0');
+                    end if;
                 else
                     fifo.wr_cnt <= fifo.wr_cnt + 1;
                 end if;
@@ -74,7 +80,7 @@ begin
         if rst = '0' then
             fifo.rd_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
-            if i_rd_valid = '1'  and i_rd_cnt_override = '0' then
+            if i_rd_valid = '1' and i_rd_cnt_override = '0' then
                 if (fifo.rd_cnt = (2 ** fifo_depth) - 1) or (fifo.empty = '1') then
                     fifo.rd_cnt <= (others => '0');
                 else
@@ -86,16 +92,18 @@ begin
 
     fifo_write_read : process (clk)
     begin
-        if (rising_edge(clk)) then        
-            memory(to_integer(fifo.wr_cnt)) <= i_rx_data;
+        if (rising_edge(clk)) then
+            if i_rxd_tvalid = '1' and fifo.full = '0' then
+                memory(to_integer(fifo.wr_cnt)) <= i_rx_data;
+            end if;
 
-            if  i_rd_cnt_override = '1' then
+            if i_rd_cnt_override = '1' then
                 o_data_sig <= std_logic_vector(memory(to_integer(i_rd_address)));
-            elsif i_deny_data = '0'  then  
+            elsif i_deny_data = '0' then
                 o_data_sig <= std_logic_vector(memory(to_integer(fifo.rd_cnt)));
-            elsif i_deny_data = '1' then 
-                o_data_sig <= (others => '0'); 
-                
+            elsif i_deny_data = '1' then
+                o_data_sig <= (others => '0');
+
             end if;
         end if;
     end process;
@@ -111,7 +119,7 @@ begin
 
     fifo.empty <= '1' when to_integer(fifo.entry_count) = 0 else
     '0';
-    fifo.full <= '1' when to_integer(fifo.entry_count) = 2 ** fifo_depth-1 else
+    fifo.full <= '1' when to_integer(fifo.entry_count) = fifo_full - 1 else
     '0';
 
     o_wr_cnt <= fifo.wr_cnt;

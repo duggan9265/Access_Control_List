@@ -9,7 +9,7 @@
 -- If a rule is broken, makes the FIFO read out all 0's. This occurs until i_rxd_tlast is set high by the Axi Ethernet top-level, and the FIFO
 -- becomes empty. Then, the FSM returns to idle.
 -- If all checks pass, data is read out starting at memory address 0x0 until i_rxd_tlast is set high and the FIFO becomes empty.
--- movement between states is controlled by the write count (wr_cnt) inside the FIFO.
+-- Movement between states is controlled by the write count (wr_cnt) inside the FIFO.
 -- 
 --                 Ethernet Header
 
@@ -38,7 +38,7 @@ entity packet_parser is
         clk, rst, i_rxd_tvalid, i_rxd_tlast : in std_logic; --will connect to FIFO
         i_rxd_tdata : in std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- connected to FIFO
         o_rxd_tdata : out std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0); -- connected to ACL_rule_matcher       
-        o_rxd_tready, o_fifo_invalid : out std_logic
+        o_rxd_tready, o_deny_data : out std_logic
     );
 end packet_parser;
 
@@ -55,7 +55,7 @@ architecture rtl of packet_parser is
     -- Record of signals that sends on data, or used to deny access immediately.
     type process_data is record
         data_out : std_logic_vector(C_s_axis_rxd_TDATA_WIDTH - 1 downto 0);
-        invalid : std_logic;
+        deny : std_logic;
     end record;
 
     -- Record of buffers for the IPv4 source and destination address.
@@ -66,7 +66,8 @@ architecture rtl of packet_parser is
 
     -- Setup the Finite State Machine
     type fsm is
-    (idle, check_ethertype, check_IPv4_protocol, IPv4_source_addr, check_IPv4_source_addr, check_IPv4_des_addr, data_invalid, wait_data, allow_data);
+    (idle, check_ethertype, check_IPv4_protocol, IPv4_source_addr, check_IPv4_source_addr, check_IPv4_des_addr, data_deny, wait_data, 
+    allow_data, last_word);
 
     signal fifo : fifo_rec;
     signal state : fsm;
@@ -90,7 +91,7 @@ begin
             i_rx_data => i_rxd_tdata,
             i_rxd_tlast => i_rxd_tlast,
             i_rd_valid => fifo.o_rd_valid, -- o_rd_valid acts as a rd_enable. Controlled by packet_parser 'I can accept data'.
-            i_deny_data => data.invalid, -- to make FIFO output all 0's when don't have IPv4 header.
+            i_deny_data => data.deny, -- to make FIFO output all 0's when don't have IPv4 header.
             i_rd_address => fifo.o_rd_address,
             i_rd_cnt_override => fifo.o_rd_cnt_override,
             o_data => fifo.i_data,
@@ -102,14 +103,14 @@ begin
     fsm_process : process (clk, rst)
     begin
         if rst = '0' then
-            fifo.o_rd_valid <= '0';
             state <= idle;
-            data.invalid <= '0';
+            data.deny <= '0';
             fifo.o_rd_cnt_override <= '0';
 
         elsif (rising_edge(clk)) then
             case state is
                 when idle =>
+                    fifo.o_rd_valid <= '0';
                     if fifo.i_wr_cnt = 3 then
                         state <= check_ethertype;
                         fifo.o_rd_address <= to_unsigned(3, fifo_depth); -- we set this so it reads the 3th word. add. 0x3
@@ -123,8 +124,8 @@ begin
                             state <= check_IPv4_protocol;
                             fifo.o_rd_address <= to_unsigned(5, fifo_depth); -- check protocol. 5th word. add 0x5
                         else
-                            state <= data_invalid;
-                            data.invalid <= '1';
+                            state <= data_deny;
+                            data.deny <= '1';
                         end if;
 
                     end if;
@@ -133,8 +134,8 @@ begin
                         if not (fifo.i_data(7 downto 0) = ICMP or
                             fifo.i_data(7 downto 0) = IPX or
                             fifo.i_data(7 downto 0) = TCP) then
-                            data.invalid <= '1';
-                            state <= data_invalid;
+                            data.deny <= '1';
+                            state <= data_deny;
                         else
                             fifo.o_rd_address <= to_unsigned(6, fifo_depth);
                             state <= IPv4_source_addr;
@@ -154,8 +155,8 @@ begin
                     end if;
                 when check_IPv4_source_addr =>
                     if not IPv4.source(31 downto 0) = source_addr then
-                        state <= data_invalid;
-                        data.invalid <= '1';
+                        state <= data_deny;
+                        data.deny <= '1';
 
                     elsif fifo.i_wr_cnt > 8 then
                         IPv4.dest(15 downto 0) <= fifo.i_data(31 downto 16); -- dest addr. 2
@@ -163,8 +164,8 @@ begin
                     end if;
                 when check_IPv4_des_addr =>
                     if not IPv4.dest(31 downto 0) = dest_addr then
-                        state <= data_invalid;
-                        data.invalid <= '1';
+                        state <= data_deny;
+                        data.deny <= '1';
                     else
                         fifo.o_rd_address <= to_unsigned(0, fifo_depth);
                         fifo.o_rd_cnt_override <= '0'; --ctrls what data is read from FIFO
@@ -177,21 +178,27 @@ begin
                 when allow_data =>
                     data.data_out <= fifo.i_data(31 downto 0);
                     if fifo.empty = '1' then
-                        state <= idle;
+                        state <= last_word;
+                        fifo.o_rd_valid <= '0';
                     else
                         state <= allow_data;
                     end if;
-                when data_invalid =>
+                when last_word =>
+                        data.data_out <= fifo.i_data;  -- This state is required to capture last word.         
+                        state <= idle;
+                when data_deny =>
                     fifo.o_rd_valid <= '1';
                     fifo.o_rd_cnt_override <= '0';
                     if fifo.empty = '1' then
                         state <= idle;
+                        fifo.o_rd_valid <= '0';
                     end if;
                 when others =>
                     state <= idle;
             end case;
         end if;
     end process;
-    o_fifo_invalid <= data.invalid;
+    
+    o_deny_data <= data.deny;
     o_rxd_tdata <= data.data_out;
 end architecture rtl;
